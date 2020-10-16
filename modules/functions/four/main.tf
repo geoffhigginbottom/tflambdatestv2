@@ -1,16 +1,16 @@
 resource "null_resource" "lambda_function_file" {
   provisioner "local-exec" {
-    command = "curl -o ${path.module}/lambda_function.py ${var.function_four_url}"
+    command = "curl -o ${path.module}/index.js ${var.function_four_url}"
   }
   provisioner "local-exec" {
     when    = destroy
-    command = "rm ${path.module}/lambda_function.py && rm ${path.module}/lambda.zip"
+    command = "rm ${path.module}/index.js && rm ${path.module}/lambda.zip"
   }
 }
 
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file  = "${path.module}/lambda_function.py"
+  source_file  = "${path.module}/index.js"
   output_path = "${path.module}/lambda.zip"
   depends_on = [null_resource.lambda_function_file]
 }

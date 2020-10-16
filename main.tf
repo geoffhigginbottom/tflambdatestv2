@@ -56,6 +56,21 @@ module "three" {
   apm_environment = var.apm_environment
 }
 
+module "four" {
+  source = "./modules/functions/four"
+  lambda_initiate_lambda_role_arn = module.iam.lambda_initiate_lambda_role_arn
+  function_four_name = var.function_four_name
+  function_four_url = var.function_four_url
+
+  region = var.region
+  region_wrapper = var.region_wrapper
+  access_token = var.access_token
+  realm = var.realm
+  metrics_url = var.metrics_url
+  metrics_tracing = var.metrics_tracing
+  apm_environment = var.apm_environment
+}
+
 # module "xxx" {
 #   source = "./modules/functions/xxx"
 #   lambda_initiate_lambda_role_arn = module.iam.lambda_initiate_lambda_role_arn

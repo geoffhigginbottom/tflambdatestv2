@@ -96,9 +96,9 @@ variable "function_three_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderPrice/index.js"
 }
 
-# variable "function_xxx_url" {
-#   default = "xxx"
-# }
+variable "function_four_url" {
+  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/index.js"
+}
 
 # variable "function_xxx_url" {
 #   default = "xxx"
