@@ -64,6 +64,10 @@ variable "apm_environment" {
 
 
 ### Function Names ###
+variable "function_example_name" {
+  default = "ServerlessExample"
+}
+
 variable "function_one_name" {
   default = "RetailOrder"
 }
@@ -83,6 +87,10 @@ variable "function_four_name" {
 # variable "function_xxx_name" {
 #   default = "xxx"
 # }
+
+variable "function_example_url" {
+  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/example/main.js"
+}
 
 variable "function_one_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrder/Lambda_Function.py"
