@@ -6,10 +6,6 @@ variable "lambda_initiate_lambda_role_arn" {
     type = string
 }
 
-variable "lambda_function_two_arn"{
-    type = string
-}
-
 ### SFx Variables ###
 variable "access_token" {}
 variable "realm" {}
@@ -18,7 +14,7 @@ variable "metrics_tracing" {}
 variable "apm_environment" {}
 
 ### Function Names ###
-variable "function_one_name" {}
+variable "function_retailorderline_name" {}
 
 ### Function URLs ###
-variable "function_one_url" {}
+variable "function_retailorderline_url" {}

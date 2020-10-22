@@ -2,9 +2,10 @@
 variable "region" {}
 variable "region_wrapper" {}
 
-variable "lambda_initiate_lambda_role_arn" {
-    type = string
-}
+### Terraform Variables ###
+variable "lambda_initiate_lambda_role_arn" {}
+variable "lambda_function_retailorderline_arn" {}
+variable "retailorderprice_base_url" {}
 
 ### SFx Variables ###
 variable "access_token" {}
@@ -14,7 +15,7 @@ variable "metrics_tracing" {}
 variable "apm_environment" {}
 
 ### Function Names ###
-variable "function_two_name" {}
+variable "function_retailorder_name" {}
 
 ### Function URLs ###
-variable "function_two_url" {}
+variable "function_retailorder_url" {}

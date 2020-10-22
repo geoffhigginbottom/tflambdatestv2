@@ -68,20 +68,20 @@ variable "function_example_name" {
   default = "ServerlessExample"
 }
 
-variable "function_one_name" {
-  default = "RetailOrder"
+variable "function_retailorder_name" {
+  default = "Retail_Order"
 }
 
-variable "function_two_name" {
-  default = "RetailOrderLine"
+variable "function_retailorderline_name" {
+  default = "Retail_Order_Line"
 }
 
-variable "function_three_name" {
-  default = "RetailOrderPrice"
+variable "function_retailorderprice_name" {
+  default = "Retail_Order_Price"
 }
 
-variable "function_four_name" {
-  default = "RetailDiscount"
+variable "function_retaildiscount_name" {
+  default = "Retail_Discount"
 }
 
 # variable "function_xxx_name" {
@@ -92,19 +92,19 @@ variable "function_example_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/example/main.js"
 }
 
-variable "function_one_url" {
+variable "function_retailorder_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrder/Lambda_Function.py"
 }
 
-variable "function_two_url" {
+variable "function_retailorderline_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderLine/Lambda_Function.py"
 }
 
-variable "function_three_url" {
+variable "function_retailorderprice_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderPrice/index.js"
 }
 
-variable "function_four_url" {
+variable "function_retaildiscount_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/index.js"
 }
 
