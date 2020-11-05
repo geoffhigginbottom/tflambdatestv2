@@ -17,7 +17,7 @@ module "iam" {
 #   function_example_url = var.function_example_url
 
 #   region = var.region
-#   region_wrapper = var.region_wrapper
+#   region_wrapper = var.region_wrapper_python
 #   access_token = var.access_token
 #   realm = var.realm
 #   metrics_url = var.metrics_url
@@ -44,7 +44,7 @@ module "retailorder" {
   function_retailorder_url = var.function_retailorder_url
   
   region = var.region
-  region_wrapper = var.region_wrapper
+  region_wrapper = var.region_wrapper_python
   access_token = var.access_token
   realm = var.realm
   metrics_url = var.metrics_url
@@ -69,7 +69,7 @@ module "retailorderline" {
   function_retailorderline_url = var.function_retailorderline_url
 
   region = var.region
-  region_wrapper = var.region_wrapper
+  region_wrapper = var.region_wrapper_python
   access_token = var.access_token
   realm = var.realm
   metrics_url = var.metrics_url
@@ -92,7 +92,7 @@ module "retailorderprice" {
   function_retailorderprice_url = var.function_retailorderprice_url
   
   region = var.region
-  region_wrapper = var.region_wrapper
+  region_wrapper = var.region_wrapper_nodejs
   access_token = var.access_token
   realm = var.realm
   metrics_url = var.metrics_url
@@ -119,7 +119,7 @@ module "retaildiscount" {
   invoke_url_tmp = module.retaildiscount.invoke_url_tmp
 
   region = var.region
-  region_wrapper = var.region_wrapper
+  region_wrapper = var.region_wrapper_nodejs
   access_token = var.access_token
   realm = var.realm
   metrics_url = var.metrics_url
