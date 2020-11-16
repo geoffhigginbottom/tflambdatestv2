@@ -1,6 +1,6 @@
-resource "aws_iam_role" "lambda_initiate_lambda_role" {
-  name_prefix = "lambda_initiate_lambda_role"
-
+resource "aws_iam_role" "lambda_role" {
+  name_prefix = "splunk_lambda_role_"
+  
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -18,9 +18,9 @@ resource "aws_iam_role" "lambda_initiate_lambda_role" {
 EOF
 }
 
-output "lambda_initiate_lambda_role_arn" {
-  value = aws_iam_role.lambda_initiate_lambda_role.arn
-}
+# output "lambda_role_arn" {
+#   value = aws_iam_role.lambda_role.arn
+# }
 
 resource "aws_iam_policy" "lambda_initiate_lambda_policy" {
   name_prefix   = "lambda_initiate_lambda_policy"
@@ -54,6 +54,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_initiate_lambda_attach" {
-  role       = aws_iam_role.lambda_initiate_lambda_role.name
+  role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.lambda_initiate_lambda_policy.arn
 }

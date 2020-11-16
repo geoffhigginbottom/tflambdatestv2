@@ -13,12 +13,6 @@ metrics_url = "https://ingest.eu0.signalfx.com"
 metrics_tracing = "https://ingest.eu0.signalfx.com/v2/trace"
 apm_environment = "https://ingest.eu0.signalfx.com/v2/trace"
 
-
-### Function Names ###
-### If populated here, will override the default values listed in variables.tf ###
-# function_one_name = "Test1"
-# function_two_name = "Test2"
-
 ### Function URLs ###
 ### If populated here, will override the default values listed in variables.tf ###
 # function_one_url = "tbc"

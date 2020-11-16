@@ -55,6 +55,19 @@ variable "region_wrapper_nodejs" {
   }
 }
 
+variable "lambda_initiate_lambda_role_arn" {
+  default = []
+}
+
+variable "function_ids" {
+  type = list(string)
+  default = []
+}
+
+variable "function_count" {
+  default = {}
+}
+
 ### SFx Variables ###
 variable "access_token" {
   default = []
@@ -76,31 +89,7 @@ variable "apm_environment" {
   default = []
 }
 
-
-### Function Names ###
-variable "function_example_name" {
-  default = "ServerlessExample"
-}
-
-variable "function_retailorder_name" {
-  default = "Retail_Order"
-}
-
-variable "function_retailorderline_name" {
-  default = "Retail_Order_Line"
-}
-
-variable "function_retailorderprice_name" {
-  default = "Retail_Order_Price"
-}
-
-variable "function_retaildiscount_name" {
-  default = "Retail_Discount"
-}
-
-# variable "function_xxx_name" {
-#   default = "xxx"
-# }
+### Function URLs ###
 
 variable "function_example_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/example/main.js"
@@ -121,7 +110,3 @@ variable "function_retailorderprice_url" {
 variable "function_retaildiscount_url" {
   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/index.js"
 }
-
-# variable "function_xxx_url" {
-#   default = "xxx"
-# }
