@@ -4,6 +4,10 @@ variable "key_name" {
   default = []
 }
 
+variable "instance_type" {
+  default = []
+}
+
 variable "profile" {
   default = []
 }
@@ -68,6 +72,23 @@ variable "function_count" {
   default = {}
 }
 
+
+## AMI ##
+data "aws_ami" "latest-ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # This is the owner id of Canonical who owns the official aws ubuntu images
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 ### SFx Variables ###
 variable "access_token" {
   default = []
@@ -88,6 +109,35 @@ variable "metrics_tracing" {
 variable "apm_environment" {
   default = []
 }
+
+variable "smart_agent_version" {
+  default = []
+}
+
+variable "zpages_endpoint" {
+  default = []
+}
+
+variable "sfx_endpoint" {
+  default = []
+}
+
+variable "environmemt" {
+  default = []
+}
+
+variable "collector_yaml_path" {
+  default = []
+}
+
+variable "collector_docker_name" {
+  default = []
+}
+
+variable "collector_image" {
+  default = []
+}
+
 
 ### Function URLs ###
 

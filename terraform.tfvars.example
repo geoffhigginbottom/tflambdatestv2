@@ -12,6 +12,8 @@ realm = "eu0"
 metrics_url = "https://ingest.eu0.signalfx.com"
 metrics_tracing = "https://ingest.eu0.signalfx.com/v2/trace"
 apm_environment = "https://ingest.eu0.signalfx.com/v2/trace"
+# smart_agent_version = "4.20.2-1" # Optional - If left blank, latest will be installed
+smart_agent_version = "" # Optional - If left blank, latest will be installed
 
 ### Function URLs ###
 ### If populated here, will override the default values listed in variables.tf ###
