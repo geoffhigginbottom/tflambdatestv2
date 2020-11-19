@@ -25,7 +25,7 @@ resource "aws_lambda_function" "retailorder" {
   function_name = "Retail_Order_${element(var.function_ids, count.index)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorder_lambda_function.lambda_handler"
-  layers        = [lookup(var.region_wrapper_python, var.region)]
+  layers        = [lookup(var.region_wrapper_python, var.region), aws_lambda_layer_version.request-opentracing_2_0.arn ]
   runtime       = "python3.8"
   timeout       = 90
 
