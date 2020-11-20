@@ -122,6 +122,10 @@ variable "sfx_endpoint" {
   default = []
 }
 
+variable "signalfx_span_tags" {
+  default = []
+}
+
 variable "environmemt" {
   default = []
 }
@@ -141,22 +145,22 @@ variable "collector_image" {
 
 ### Function URLs ###
 
-variable "function_example_url" {
-  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/example/main.js"
-}
+# variable "function_example_url" {
+#   default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/example/main.js"
+# }
 
 variable "function_retailorder_url" {
-  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrder/Lambda_Function.py"
+  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrder/APM/Lambda_Function.py"
 }
 
 variable "function_retailorderline_url" {
-  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderLine/Lambda_Function.py"
+  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderLine/APM/Lambda_Function.py"
 }
 
 variable "function_retailorderprice_url" {
-  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderPrice/index.js"
+  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderPrice/APM/index.js"
 }
 
-variable "function_retaildiscount_url" {
-  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/index.js"
+variable "function_retailorderdiscount_url" {
+  default = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/APM/index.js"
 }
