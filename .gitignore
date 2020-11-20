@@ -35,3 +35,4 @@ override.tf.json
 lambda.zip
 lambda_function.py
 index.js
+retail*
