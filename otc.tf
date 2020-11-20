@@ -1,4 +1,4 @@
-resource "aws_security_group" "instance" {
+resource "aws_security_group" "otc" {
   name = "Splunk-Open-Telemetry-Collector"
 
   ingress {
@@ -42,19 +42,7 @@ resource "aws_instance" "otc" {
   ami                     = data.aws_ami.latest-ubuntu.id
   instance_type           = var.instance_type
   key_name                = var.key_name
-  vpc_security_group_ids  = [aws_security_group.instance.id]
-
-#   user_data = <<-EOF
-#             #!/bin/bash
-#             sudo su
-#             apt-get install \
-#             apt-transport-https \
-#             ca-certificates \
-#             curl \
-#             gnupg-agent \
-#             software-properties-common -y
-#             EOF
-
+  vpc_security_group_ids  = [aws_security_group.otc.id]
   tags = {
     Name  = "otc_${element(var.function_ids, count.index)}"
     Role  = "Open Telemetry Collector"
@@ -78,23 +66,23 @@ resource "aws_instance" "otc" {
 
   provisioner "remote-exec" {
     inline = [
-      ## Set Hostname
+      # Set Hostname
       "sudo sed -i 's/127.0.0.1.*/127.0.0.1 ${self.tags.Name}.local ${self.tags.Name} localhost/' /etc/hosts",
       "sudo hostnamectl set-hostname ${self.tags.Name}",
       "sudo apt-get update",
       "sudo apt-get upgrade -y",
     
-      ## Install SignalFx
+      # Install SignalFx
       "TOKEN=${var.access_token}",
       "REALM=${var.realm}",
       "HOSTNAME=${self.tags.Name}",
       "AGENTVERSION=${var.smart_agent_version}",
       "sudo chmod +x /tmp/install_smart_agent.sh",
       "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
-      # "sudo mv /tmp/agent.yaml /etc/signalfx/agent.yaml",
-      # "sudo chown root:root /etc/signalfx/agent.yaml",
-      # "sudo apt-mark hold signalfx-agent",
-      # "sudo service signalfx-agent restart",
+      "sudo mv /tmp/agent.yaml /etc/signalfx/agent.yaml",
+      "sudo chown root:root /etc/signalfx/agent.yaml",
+      "sudo apt-mark hold signalfx-agent",
+      "sudo service signalfx-agent restart",
 
       ## Install shellinabox (used to enable shell access via browser)
       "sudo apt-get install shellinabox -y",
@@ -110,13 +98,6 @@ resource "aws_instance" "otc" {
       "sudo apt-get install docker-ce docker-ce-cli containerd.io -y",
       "sudo systemctl enable docker",
 
-      # ## Write Vars to file (used for debugging)
-      # "echo ${var.access_token} > /tmp/access_token",
-      # "echo ${var.realm} > /tmp/realm",
-      # "echo ${var.environmemt} > /tmp/environment",
-      # "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
-      # "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
-
       ## Set Vars for Collector
       "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
       "ENVIRONMENT=${var.environmemt}",
@@ -125,12 +106,12 @@ resource "aws_instance" "otc" {
       "COLLECTOR_NAME=${var.collector_docker_name}",
       "COLLECTOR_IMAGE=${var.collector_image}",
 
-      # ## Write Vars to file (used for debugging)
-      # "echo ${var.access_token} > /tmp/access_token",
-      # "echo ${var.realm} > /tmp/realm",
-      # "echo ${var.environmemt} > /tmp/environment",
-      # "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
-      # "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
+      ## Write Vars to file (used for debugging)
+      "echo ${var.access_token} > /tmp/access_token",
+      "echo ${var.realm} > /tmp/realm",
+      "echo ${var.environmemt} > /tmp/environment",
+      "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
+      "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
 
       ## Generate signalfx-collector.yaml file
       "sudo chmod +x /tmp/generate_signalfx_collector.sh",
@@ -154,57 +135,3 @@ resource "aws_instance" "otc" {
     agent = "true"
   }
 }
-
-
-### The below wont work as its not trying to deploy onto the ec2 instance!!!
-# Configure the Docker provider
-# provider "docker" {
-#   host = "tcp://127.0.0.1:2376/"
-# }
-
-# resource "docker_container" "otelcontribcol" {
-#   image = "otel/opentelemetry-collector-contrib:0.14.0"
-#   name = "otelcontribcol"
-#   start = true
-#   must_run = true
-#   restart = "always"
-#   memory = 683
-#   mounts {
-#     target = "/etc/collector.yaml"
-#     type = "volume"
-#     source = "/tmp/collector.yaml"
-#     read_only = true
-#   }
-#   ports {
-#     internal = "13133"
-#     external = "13133"
-#     }
-#   ports {
-#     internal = "55679"
-#     external = "55679"
-#   }
-#   ports {
-#     internal = "55680"
-#     external = "55680"
-#   }
-#   ports {
-#     internal = "660"
-#     external = "660"
-#     }
-#   ports {
-#     internal = "7276"
-#     external = "7276"
-#   }
-#   ports {
-#     internal = "8888"
-#     external = "8888"
-#   }
-#   ports {
-#     internal = "9411"
-#     external = "9411"
-#   }
-#   ports {
-#     internal = "9943"
-#     external = "9943"
-#   }    
-# }
