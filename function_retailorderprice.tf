@@ -22,7 +22,7 @@ data "archive_file" "retailorderprice_lambda_zip" {
 resource "aws_lambda_function" "retailorderprice" {
   count         = var.function_count
   filename      = "retailorderprice_lambda.zip"
-  function_name = "Retail_Order_Price_${element(var.function_ids, count.index)}"
+  function_name = "RetailOrderPrice_${element(var.function_ids, count.index)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderprice_index.handler"
   layers        = [lookup(var.region_wrapper_nodejs, var.region)]
@@ -31,13 +31,14 @@ resource "aws_lambda_function" "retailorderprice" {
 
   environment {
     variables = {
-      API_URL                       = aws_ssm_parameter.invoke_urls[count.index].value
-      RETAIL_DISCOUNT_FUNCTION_NAME = aws_lambda_function.retaildiscount[count.index].function_name
-      STAGE                         = aws_api_gateway_deployment.retaildiscount[count.index].stage_name
-      # SIGNALFX_ACCESS_TOKEN         = var.access_token
-      # SIGNALFX_APM_ENVIRONMENT      = var.apm_environment
-      # SIGNALFX_METRICS_URL          = var.metrics_url
-      # SIGNALFX_TRACING_URL          = var.metrics_tracing
+      DISCOUNT_HOST                 = aws_ssm_parameter.retaildiscount_invoke_url[count.index].value
+      # RETAIL_DISCOUNT_FUNCTION_NAME = aws_lambda_function.retailorderdiscount[count.index].function_name
+      # STAGE                         = aws_api_gateway_deployment.retailorderdiscount[count.index].stage_name
+      DISCOUNT_PATH                 = aws_ssm_parameter.retailorderdiscount_path[count.index].value
+      SIGNALFX_ACCESS_TOKEN         = var.access_token
+      SIGNALFX_APM_ENVIRONMENT      = var.apm_environment
+      SIGNALFX_METRICS_URL          = var.metrics_url
+      SIGNALFX_ENDPOINT_URL          = var.metrics_tracing
     }
   }
 }
