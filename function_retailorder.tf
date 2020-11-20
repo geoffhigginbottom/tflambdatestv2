@@ -22,7 +22,7 @@ data "archive_file" "retailorder_lambda_zip" {
 resource "aws_lambda_function" "retailorder" {
   count         = var.function_count
   filename      = "retailorder_lambda.zip"
-  function_name = "Retail_Order_${element(var.function_ids, count.index)}"
+  function_name = "RetailOrder_${element(var.function_ids, count.index)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorder_lambda_function.lambda_handler"
   layers        = [lookup(var.region_wrapper_python, var.region), aws_lambda_layer_version.request-opentracing_2_0.arn ]
@@ -31,12 +31,12 @@ resource "aws_lambda_function" "retailorder" {
 
   environment {
     variables = {
-      CHILD_FUNCTION_ARN       = aws_lambda_function.retailorderline[count.index].arn
-      URL_STRING               = aws_api_gateway_deployment.retailorderprice[count.index].invoke_url
-      # SIGNALFX_ACCESS_TOKEN    = var.access_token
-      # SIGNALFX_APM_ENVIRONMENT = var.apm_environment
-      # SIGNALFX_METRICS_URL     = var.metrics_url
-      # SIGNALFX_TRACING_URL     = var.metrics_tracing
+      ORDER_LINE               = aws_lambda_function.retailorderline[count.index].arn
+      PRICE_URL                = aws_ssm_parameter.retailorderprice_invoke_url[count.index].value
+      SIGNALFX_ACCESS_TOKEN    = var.access_token
+      SIGNALFX_APM_ENVIRONMENT = var.apm_environment
+      SIGNALFX_METRICS_URL     = var.metrics_url
+      SIGNALFX_TRACING_URL     = var.metrics_tracing
     }
   }
 }
