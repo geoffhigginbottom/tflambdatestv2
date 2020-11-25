@@ -114,6 +114,10 @@ variable "smart_agent_version" {
   default = []
 }
 
+variable "collector_endpoint" {
+  default = []
+}
+
 variable "zpages_endpoint" {
   default = []
 }
