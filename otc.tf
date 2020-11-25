@@ -1,42 +1,3 @@
-resource "aws_security_group" "otc" {
-  name = "Splunk-Open-Telemetry-Collector"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 6501
-    to_port     = 6501
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_instance" "otc" {
   count                   = var.function_count
   ami                     = data.aws_ami.latest-ubuntu.id
@@ -79,10 +40,10 @@ resource "aws_instance" "otc" {
       "AGENTVERSION=${var.smart_agent_version}",
       "sudo chmod +x /tmp/install_smart_agent.sh",
       "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
-      "sudo mv /tmp/agent.yaml /etc/signalfx/agent.yaml",
-      "sudo chown root:root /etc/signalfx/agent.yaml",
-      "sudo apt-mark hold signalfx-agent",
-      "sudo service signalfx-agent restart",
+      # "sudo mv /tmp/agent.yaml /etc/signalfx/agent.yaml",
+      # "sudo chown root:root /etc/signalfx/agent.yaml",
+      # "sudo apt-mark hold signalfx-agent",
+      # "sudo service signalfx-agent restart",
 
       ## Install shellinabox (used to enable shell access via browser)
       "sudo apt-get install shellinabox -y",
@@ -99,7 +60,8 @@ resource "aws_instance" "otc" {
       "sudo systemctl enable docker",
 
       ## Set Vars for Collector
-      "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
+      # "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
+      "COLLECTOR_ENDPOINT=${var.collector_endpoint}",
       "ENVIRONMENT=${var.environmemt}",
       "SFX_ENDPOINT=${var.sfx_endpoint}",
       "COLLECTOR_YAML_PATH=${var.collector_yaml_path}",
@@ -107,15 +69,15 @@ resource "aws_instance" "otc" {
       "COLLECTOR_IMAGE=${var.collector_image}",
 
       ## Write Vars to file (used for debugging)
+      # "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
       "echo ${var.access_token} > /tmp/access_token",
       "echo ${var.realm} > /tmp/realm",
       "echo ${var.environmemt} > /tmp/environment",
-      "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
       "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
 
       ## Generate signalfx-collector.yaml file
       "sudo chmod +x /tmp/generate_signalfx_collector.sh",
-      "sudo /tmp/generate_signalfx_collector.sh $ZPAGES_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
+      "sudo /tmp/generate_signalfx_collector.sh $COLLECTOR_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
 
       ## Generate generate_otc_startup.sh file
       "sudo chmod +x /tmp/generate_otc_startup.sh",
