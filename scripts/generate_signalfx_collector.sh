@@ -14,7 +14,8 @@ extensions:
   http_forwarder:
     egress:
     #   endpoint: "https://api.${SFX_REALM}.signalfx.com"
-      endpoint: "$ZPAGES_ENDPOINT"
+      # endpoint: "$ZPAGES_ENDPOINT"
+      endpoint: "$COLLECTOR_ENPOINT"
   zpages:
 receivers:
   sapm:
