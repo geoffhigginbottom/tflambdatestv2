@@ -1,6 +1,7 @@
 ### AWS Variables ###
 profile = "xxx"
 key_name = "yyy"
+private_key_path = "~/.ssh/xxx.pem or ~/.ssh/id_rsa etc"
 instance_type = "t2.micro"
 
 ### If region is not set (default) you are prompted to choose a region at run time.
@@ -17,10 +18,10 @@ apm_environment = "Retail_Demo"
 # smart_agent_version = "4.20.2-1" # Optional - If left blank, latest will be installed
 smart_agent_version = "" # Optional - If left blank, latest will be installed
 
-zpages_endpoint = "localhost:56888"
-### Ensure realm in sfx_endpoint matches realm setting above
+### Ensure realm in endpoints matches realm setting above
+collector_endpoint = "https://api.eu0.signalfx.com"
 sfx_endpoint = "https://ingest.eu0.signalfx.com/v2/trace"
-#environmemt = "splunk_lambda_demo"
+environmemt = "splunk_lambda_demo"
 signalfx_span_tags = "environment:Retail_Demo, phase:Dev"
 
 collector_yaml_path = "/tmp/collector.yaml"
