@@ -43,6 +43,23 @@ resource "aws_instance" "java_client" {
       ## Write Vars to file (used for debugging)
       "echo ${var.access_token} > /tmp/access_token",
       "echo ${var.realm} > /tmp/realm",
+      # "echo aws_ssm_parameter.retailorder_invoke_url[count.index].value"
+
+      ## Install Maven 
+      ## TO DO - NEED TO USE VARS - TO DO ##
+      "sudo apt install maven -y",
+      # "git clone https://github.com/p-hagen-Signalfx/SplunkLambdaAPM.git",
+      "git clone ${var.java_app_url}",
+
+      ## TO DO ##
+      ## Updated /home/ubuntu/SplunkLambdaAPM/LocalLambdaCallers/JavaLambdaAPM/src/main/java/com/sfx/JavaLambda# 
+      ## & /home/ubuntu/SplunkLambdaAPM/LocalLambdaCallers/JavaLambdaBase/src/main/java/com/sfx/JavaLambda
+      ## Line String url = "https://ckfnajft3i.execute-api.eu-west-1.amazonaws.com/default/RetailOrder";
+      ## URL of API Gateway and drop the function name from the end
+      ## mvn spring-boot:run
+
+
+
     ]  
   }
 
@@ -50,7 +67,8 @@ resource "aws_instance" "java_client" {
     host = self.public_ip
     type = "ssh"
     user = "ubuntu"
-    private_key = file("~/.ssh/id_rsa")
+    # private_key = file("~/.ssh/id_rsa")
+    private_key = file(var.private_key_path)
     agent = "true"
   }
 }
