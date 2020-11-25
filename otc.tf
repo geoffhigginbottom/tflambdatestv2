@@ -93,7 +93,8 @@ resource "aws_instance" "otc" {
     host = self.public_ip
     type = "ssh"
     user = "ubuntu"
-    private_key = file("~/.ssh/id_rsa")
+    # private_key = file("~/.ssh/id_rsa")
+    private_key = file(var.private_key_path)
     agent = "true"
   }
 }
