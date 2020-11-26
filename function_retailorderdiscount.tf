@@ -146,11 +146,11 @@ output "retailorderdiscount_path" {
   )
 }
 
-# ### Debugging Outputs
-# output "retailorderdiscount_arns" {
-#   value =  formatlist(
-#     "%s, %s", 
-#     aws_lambda_function.retailorderdiscount.*.function_name,
-#     aws_lambda_function.retailorderdiscount.*.arn
-#   )
-# }
+### Debugging Outputs
+output "retailorderdiscount_arns" {
+  value =  formatlist(
+    "%s, %s", 
+    aws_lambda_function.retailorderdiscount.*.function_name,
+    aws_lambda_function.retailorderdiscount.*.arn
+  )
+}

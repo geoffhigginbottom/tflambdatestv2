@@ -41,11 +41,11 @@ resource "aws_lambda_function" "retailorderline" {
   }
 }
 
-# ### Debugging Outputs
-# output "retailorderline_arns" {
-#   value =  formatlist(
-#     "%s, %s", 
-#     aws_lambda_function.retailorderline.*.function_name,
-#     aws_lambda_function.retailorderline.*.arn
-#   )
-# }
+### Debugging Outputs
+output "retailorderline_arns" {
+  value =  formatlist(
+    "%s, %s", 
+    aws_lambda_function.retailorderline.*.function_name,
+    aws_lambda_function.retailorderline.*.arn
+  )
+}

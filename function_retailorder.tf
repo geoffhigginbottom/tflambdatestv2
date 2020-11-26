@@ -32,7 +32,8 @@ resource "aws_lambda_function" "retailorder" {
   environment {
     variables = {
       ORDER_LINE               = aws_lambda_function.retailorderline[count.index].arn
-      PRICE_URL                = aws_ssm_parameter.retailorderprice_invoke_url[count.index].value
+      # PRICE_URL                = aws_ssm_parameter.retailorderprice_invoke_url[count.index].value
+      PRICE_URL                = aws_api_gateway_deployment.retailorderprice[count.index].invoke_url
       SIGNALFX_ACCESS_TOKEN    = var.access_token
       SIGNALFX_APM_ENVIRONMENT = var.apm_environment
       SIGNALFX_METRICS_URL     = var.metrics_url
@@ -130,11 +131,11 @@ resource "aws_lambda_permission" "retailorder_apigw" {
   source_arn = "${aws_api_gateway_rest_api.retailorder[count.index].execution_arn}/*/*"
 }
 
-# ### Debugging Outputs
-# output "retailorder_arns" {
-#   value =  formatlist(
-#     "%s, %s", 
-#     aws_lambda_function.retailorder.*.function_name,
-#     aws_lambda_function.retailorder.*.arn
-#   )
-# }
+### Debugging Outputs
+output "retailorder_arns" {
+  value =  formatlist(
+    "%s, %s", 
+    aws_lambda_function.retailorder.*.function_name,
+    aws_lambda_function.retailorder.*.arn
+  )
+}
