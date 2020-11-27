@@ -3,10 +3,10 @@ resource "aws_instance" "otc" {
   ami                     = data.aws_ami.latest-ubuntu.id
   instance_type           = var.instance_type
   key_name                = var.key_name
-  vpc_security_group_ids  = [aws_security_group.otc.id]
+  vpc_security_group_ids  = [aws_security_group.splunk_otc.id]
   tags = {
-    Name  = "otc_${element(var.function_ids, count.index)}"
-    Role  = "Open Telemetry Collector"
+    Name  = lower("${element(var.function_ids, count.index)}_otc")
+    # Role  = "Open Telemetry Collector"
   }
 
   provisioner "file" {
@@ -93,8 +93,15 @@ resource "aws_instance" "otc" {
     host = self.public_ip
     type = "ssh"
     user = "ubuntu"
-    # private_key = file("~/.ssh/id_rsa")
     private_key = file(var.private_key_path)
     agent = "true"
   }
+}
+
+output "OTC_Instances" {
+  value =  formatlist(
+    "%s, %s", 
+    aws_instance.otc.*.tags.Name,
+    aws_instance.otc.*.public_ip,
+  )
 }

@@ -1,4 +1,4 @@
-resource "aws_security_group" "otc" {
+resource "aws_security_group" "splunk_otc" {
   name = "Splunk-Open-Telemetry-Collector"
 
   ingress {
@@ -30,6 +30,46 @@ resource "aws_security_group" "otc" {
   }
 
   ingress {
+    from_port   = 6501
+    to_port     = 6501
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+resource "aws_security_group" "splunk_jc" {
+  name = "Splunk-Java-Client"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    ingress {
     from_port   = 6501
     to_port     = 6501
     protocol    = "tcp"
