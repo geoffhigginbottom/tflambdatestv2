@@ -20,6 +20,10 @@ variable "region" {
   description = "Select region (1:eu-west-1, 2:eu-west-3, 3:eu-central-1, 4:us-east-1, 5:us-east-2, 6:us-west-1, 7:us-west-2, 8:ap-southeast-1, 9:ap-southeast-2, 10:sa-east-1 )"
 }
 
+variable "function_timeout" {
+  default = 15
+}
+
 variable "aws_region" {
   description = "Provide the desired region"
     default = {
@@ -67,6 +71,52 @@ variable "region_wrapper_nodejs" {
     "10" = "arn:aws:lambda:sa-east-1:254067382080:layer:signalfx-lambda-nodejs-wrapper:17"  
   }
 }
+
+## Select beteen APM and Base version of the Functions
+variable "function_version" {
+  description = "Select Function Version (a:apm, b:base)"
+}
+
+variable "function_version_function_name_suffix" {
+  default = {
+    "a" = "apm"
+    "b" = "base"
+  }
+}
+
+variable "function_version_function_retailorder_url" {
+  default = {
+    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderAPM/Lambda_Function.py"
+    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrder/Lambda_Function.py"
+  }
+}
+
+variable "function_version_function_retailorderline_url" {
+  default = {
+    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderLineAPM/Lambda_Function.py"
+    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderLine/Lambda_Function.py"
+  }
+}
+
+variable "function_version_function_retailorderprice_url" {
+  default = {
+    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderPriceAPM/index.js"
+    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderPrice/index.js"
+  }
+}
+
+variable "function_version_function_retailorderdiscount_url" {
+  default = {
+    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailDiscountAPM/index.js"
+    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailDiscount/index.js"
+  }
+}
+
+## URL for the Java App - pulls it from the listed Git Repo
+variable "java_app_url" {
+  default = "https://github.com/p-hagen-Signalfx/SplunkLambdaAPM.git"
+}
+
 
 variable "lambda_initiate_lambda_role_arn" {
   default = []
@@ -153,31 +203,4 @@ variable "collector_docker_name" {
 
 variable "collector_image" {
   default = []
-}
-
-
-### Function URLs ###
-
-variable "function_retailorder_url" {
-  # default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderAPM/Lambda_Function.py"
-  default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrder/Lambda_Function.py"
-}
-
-variable "function_retailorderline_url" {
-  # default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderLineAPM/Lambda_Function.py"
-  default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderLine/Lambda_Function.py"
-}
-
-variable "function_retailorderprice_url" {
-  # default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderPriceAPM/index.js"
-  default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderPrice/index.js"
-}
-
-variable "function_retailorderdiscount_url" {
-  # default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailDiscountAPM/index.js"
-  default = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailDiscount/index.js"
-}
-
-variable "java_app_url" {
-  default = "https://github.com/p-hagen-Signalfx/SplunkLambdaAPM.git"
 }

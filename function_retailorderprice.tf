@@ -3,7 +3,7 @@
 ## from a separate repo defined in varibales.tf in root folder
 resource "null_resource" "retailorderprice_lambda_function_file" {
   provisioner "local-exec" {
-    command = "curl -o retailorderprice_index.js ${var.function_retailorderprice_url}"
+    command = "curl -o retailorderprice_index.js ${lookup(var.function_version_function_retailorderprice_url, var.function_version)}"
   }
   provisioner "local-exec" {
     when    = destroy
@@ -22,18 +22,16 @@ data "archive_file" "retailorderprice_lambda_zip" {
 resource "aws_lambda_function" "retailorderprice" {
   count         = var.function_count
   filename      = "retailorderprice_lambda.zip"
-  function_name = "RetailOrderPrice_${element(var.function_ids, count.index)}"
+  function_name = "${element(var.function_ids, count.index)}_RetailOrderPrice_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderprice_index.handler"
   layers        = [lookup(var.region_wrapper_nodejs, var.region)]
   runtime       = "nodejs12.x"
-  timeout       = 90
+  timeout       = var.function_timeout
 
   environment {
     variables = {
       DISCOUNT_HOST                 = aws_ssm_parameter.retaildiscount_invoke_url[count.index].value
-      # RETAIL_DISCOUNT_FUNCTION_NAME = aws_lambda_function.retailorderdiscount[count.index].function_name
-      # STAGE                         = aws_api_gateway_deployment.retailorderdiscount[count.index].stage_name
       DISCOUNT_PATH                 = aws_ssm_parameter.retailorderdiscount_path[count.index].value
       SIGNALFX_ACCESS_TOKEN         = var.access_token
       SIGNALFX_APM_ENVIRONMENT      = var.apm_environment
@@ -132,11 +130,11 @@ resource "aws_lambda_permission" "retailorderprice_apigwapigw" {
   source_arn = "${aws_api_gateway_rest_api.retailorderprice[count.index].execution_arn}/*/*"
 }
 
-# ### Debugging Outputs
-# output "retailorderprice_arns" {
-#   value =  formatlist(
-#     "%s, %s", 
-#     aws_lambda_function.retailorderprice.*.function_name,
-#     aws_lambda_function.retailorderprice.*.arn
-#   )
-# }
+### Debugging Outputs
+output "retailorderprice_arns" {
+  value =  formatlist(
+    "%s, %s", 
+    aws_lambda_function.retailorderprice.*.function_name,
+    aws_lambda_function.retailorderprice.*.arn
+  )
+}

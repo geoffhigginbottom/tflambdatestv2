@@ -27,11 +27,3 @@ signalfx_span_tags = "environment:Retail_Demo, phase:Dev"
 collector_yaml_path = "/tmp/collector.yaml"
 collector_docker_name = "otelcontribcol"
 collector_image = "otel/opentelemetry-collector-contrib:0.14.0"
-
-### Function URLs ###
-### If populated here, will override the default values listed in variables.tf ###
-# function_retailorder_url = "xxx"
-# function_retailorderline_url = "xxx"
-# function_retailorderprice_url = "xxx"
-# function_retailorderdiscount_url = "xxx"
-

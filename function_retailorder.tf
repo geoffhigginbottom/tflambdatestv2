@@ -3,7 +3,7 @@
 ## from a separate repo defined in varibales.tf in root folder
 resource "null_resource" "retailorder_lambda_function_file" {
   provisioner "local-exec" {
-    command = "curl -o retailorder_lambda_function.py ${var.function_retailorder_url}"
+    command = "curl -o retailorder_lambda_function.py ${lookup(var.function_version_function_retailorder_url, var.function_version)}"
   }
   provisioner "local-exec" {
     when    = destroy
@@ -22,12 +22,13 @@ data "archive_file" "retailorder_lambda_zip" {
 resource "aws_lambda_function" "retailorder" {
   count         = var.function_count
   filename      = "retailorder_lambda.zip"
-  function_name = "RetailOrder_${element(var.function_ids, count.index)}"
+  function_name = "${element(var.function_ids, count.index)}_RetailOrder_${lookup(var.function_version_function_name_suffix, var.function_version)}"
+  # function_name = "RetailOrder_${element(var.function_ids, count.index)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorder_lambda_function.lambda_handler"
   layers        = [aws_lambda_layer_version.request-opentracing_2_0.arn, lookup(var.region_wrapper_python, var.region) ]
   runtime       = "python3.8"
-  timeout       = 90
+  timeout       = var.function_timeout
 
   environment {
     variables = {

@@ -3,7 +3,7 @@
 ## from a separate repo defined in varibales.tf in root folder
 resource "null_resource" "retailorderline_lambda_function_file" {
   provisioner "local-exec" {
-    command = "curl -o retailorderline_lambda_function.py ${var.function_retailorderline_url}"
+    command = "curl -o retailorderline_lambda_function.py ${lookup(var.function_version_function_retailorderline_url, var.function_version)}"
   }
   provisioner "local-exec" {
     when    = destroy
@@ -22,17 +22,16 @@ data "archive_file" "retailorderline_lambda_zip" {
 resource "aws_lambda_function" "retailorderline" {
   count         = var.function_count
   filename      = "retailorderline_lambda.zip"
-  # function_name = var.function_retailorderline_name
-  function_name = "RetailOrderLine_${element(var.function_ids, count.index)}"
+  function_name = "${element(var.function_ids, count.index)}_RetailOrderLine_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderline_lambda_function.lambda_handler"
-  # layers        = [lookup(var.region_wrapper_python, var.region), aws_lambda_layer_version.request-opentracing_2_0.arn ]
   layers        = [aws_lambda_layer_version.request-opentracing_2_0.arn, lookup(var.region_wrapper_python, var.region) ]
   runtime       = "python3.8"
-  timeout       = 90
+  timeout       = var.function_timeout
 
   environment {
     variables = {
+      LAMBDA_FUNCTION_NAME = "${element(var.function_ids, count.index)}_RetailOrder_${lookup(var.function_version_function_name_suffix, var.function_version)}"
       SIGNALFX_ACCESS_TOKEN = var.access_token
       SIGNALFX_APM_ENVIRONMENT = var.apm_environment
       SIGNALFX_METRICS_URL = var.metrics_url

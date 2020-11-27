@@ -3,7 +3,7 @@
 ## from a separate repo defined in varibales.tf in root folder
 resource "null_resource" "retailorderdiscount_lambda_function_file" {
   provisioner "local-exec" {
-    command = "curl -o retailorderdiscount_index.js ${var.function_retailorderdiscount_url}"
+    command = "curl -o retailorderdiscount_index.js ${lookup(var.function_version_function_retailorderdiscount_url, var.function_version)}"
   }
   provisioner "local-exec" {
     when    = destroy
@@ -22,12 +22,12 @@ data "archive_file" "retailorderdiscount_lambda_zip" {
 resource "aws_lambda_function" "retailorderdiscount" {
   count         = var.function_count
   filename      = "retailorderdiscount_lambda.zip"
-  function_name = "RetailOrderDiscount_${element(var.function_ids, count.index)}"
+  function_name = "${element(var.function_ids, count.index)}_RetailOrderDiscount_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderdiscount_index.handler"
   layers        = [lookup(var.region_wrapper_nodejs, var.region)]
   runtime       = "nodejs12.x"
-  timeout       = 90
+  timeout       = var.function_timeout
 
   environment {
     variables = {
