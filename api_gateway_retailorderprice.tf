@@ -1,7 +1,7 @@
 ### API Gateway ###
 resource "aws_api_gateway_rest_api" "retailorderprice" {
   count       = var.function_count
-  name        = "RetailOrderPrice_${element(var.function_ids, count.index)}_api_gateway"
+  name        = "${element(var.function_ids, count.index)}_RetailOrderPrice_api_gateway"
 }
 
 ### Debugging Outputs

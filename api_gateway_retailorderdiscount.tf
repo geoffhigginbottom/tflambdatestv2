@@ -1,7 +1,7 @@
 ### API Gateway ###
 resource "aws_api_gateway_rest_api" "retailorderdiscount" {
   count       = var.function_count
-  name        = "RetailOrderDiscount_${element(var.function_ids, count.index)}_api_gateway"
+  name        = "${element(var.function_ids, count.index)}_RetailOrderDiscount_api_gateway"
 }
 
 ### Trim the https:// and /default from the api invoke url and store in aws_ssm
