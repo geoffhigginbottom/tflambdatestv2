@@ -14,10 +14,22 @@ resource "aws_instance" "java_client" {
     destination = "/tmp/install_smart_agent.sh"
   }
 
-    provisioner "file" {
+  provisioner "file" {
     source      = "./scripts/generate_java_app.sh"
     destination = "/tmp/generate_java_app.sh"
   }
+
+  provisioner "file" {
+    source      = "./scripts/generate_run_splunk_lambda_apm.sh"
+    destination = "/tmp/generate_run_splunk_lambda_apm.sh"
+  }
+
+  provisioner "file" {
+    source      = "./config_files/splunk_lambda_apm.service"
+    destination = "/tmp/splunk_lambda_apm.service"
+  }
+
+  
 
   provisioner "remote-exec" {
     inline = [
@@ -59,6 +71,21 @@ resource "aws_instance" "java_client" {
 
       ## TO DO - auto run app / start as a service etc - TO DO ##
       ## mvn spring-boot:run
+
+      ## Set Java App to auto run
+      # "APP_VERSION=${tostring(var.function_version_app_version)}",
+      # "APP_VERSION=${var.function_version_app_version}",
+      # "echo $APP_VERSION > /tmp/APP_VERSION", # debugging
+      # "sudo chmod +x /tmp/generate_run_splunk_lambda_apm.sh",
+      # "sudo /tmp/generate_run_splunk_lambda_apm.sh $APP_VERSION",
+      # "sudo mv /tmp/run_splunk_lambda_apm.sh /usr/local/bin/run_splunk_lambda_apm.sh",
+      # "sudo chown root:root /usr/local/bin/run_splunk_lambda_apm.sh",
+      # "sudo chmod +x /usr/local/bin/run_splunk_lambda_apm.sh",
+      # "sudo mv /tmp/splunk_lambda_apm.service /lib/systemd/system/splunk_lambda_apm.service",
+      # "sudo chown root:root /lib/systemd/system/splunk_lambda_apm.service",
+      # "sudo systemctl enable splunk_lambda_apm.service",
+      # "sudo systemctl daemon-reload",
+      # "sudo systemctl restart splunk_lambda_apm"
     ]  
   }
 
