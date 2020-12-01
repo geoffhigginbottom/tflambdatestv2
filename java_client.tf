@@ -67,10 +67,7 @@ resource "aws_instance" "java_client" {
       "INVOKE_URL=${aws_api_gateway_deployment.retailorder[count.index].invoke_url}",
       "sudo /tmp/generate_java_app.sh $JAVA_APP_URL $INVOKE_URL",
       "sudo chmod +x /tmp/java_app.sh",
-      "sudo /tmp/java_app.sh",
-
-      ## TO DO - auto run app / start as a service etc - TO DO ##
-      ## mvn spring-boot:run
+      "/tmp/java_app.sh",
 
       ## Set Java App to auto run
       # "APP_VERSION=${tostring(var.function_version_app_version)}",
