@@ -4,19 +4,26 @@ key_name = "yyy"
 private_key_path = "~/.ssh/xxx.pem or ~/.ssh/id_rsa etc"
 instance_type = "t2.micro"
 
-### If region is not set (default) you are prompted to choose a region at run time.
-### Setting a region here removes the prompt - good for repetitive testing 
+## Terraform will prompt you to select an AWS Region to deploy the resources into
+## Setting a region here removes the region prompt (default is to have it prompt you)
+## List of supported regions can be found in the variables.tf file
 #region = "2"
 
-### Enabling function_version will override the prompt for which version you want to deploy
+
+### Splunk Variables ###
+
+## Terraform will prompt you to select a version to be deployed,
+## "a" = apm version, "b" = base version.
+## Base version is typically deployed, but the apm version can be deployed 
+## for testing and comparison purposes
 #function_version = "b"
 
-### SFx Variables ###
-### Default values are using eu0 realm - update for your specific realm ###
-access_token = "xxx"
-realm = "eu0"
+access_token = "xxxxxxxxxx"
+realm = "xxx"
 
-# smart_agent_version = "4.20.2-1" # Optional - If left blank, latest will be installed
+# smart_agent_version = "5.6.0-1" # Optional - If left blank, latest will be installed
 smart_agent_version = "" # Optional - If left blank, latest will be installed
 
-collector_image = "otel/opentelemetry-collector-contrib:0.14.0"
+## Latest otel collector releases can be found at 
+## https://github.com/open-telemetry/opentelemetry-collector-contrib/releases
+collector_image = "otel/opentelemetry-collector-contrib:0.15.0"
