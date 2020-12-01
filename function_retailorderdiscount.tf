@@ -22,7 +22,8 @@ data "archive_file" "retailorderdiscount_lambda_zip" {
 resource "aws_lambda_function" "retailorderdiscount" {
   count         = var.function_count
   filename      = "retailorderdiscount_lambda.zip"
-  function_name = "${element(var.function_ids, count.index)}_RetailOrderDiscount_${lookup(var.function_version_function_name_suffix, var.function_version)}"
+  function_name = "${element(var.function_ids, count.index)}_RetailOrderDiscount"
+  # function_name = "${element(var.function_ids, count.index)}_RetailOrderDiscount_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderdiscount_index.handler"
   layers        = [lookup(var.region_wrapper_nodejs, var.region)]

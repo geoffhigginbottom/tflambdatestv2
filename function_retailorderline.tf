@@ -22,7 +22,8 @@ data "archive_file" "retailorderline_lambda_zip" {
 resource "aws_lambda_function" "retailorderline" {
   count         = var.function_count
   filename      = "retailorderline_lambda.zip"
-  function_name = "${element(var.function_ids, count.index)}_RetailOrderLine_${lookup(var.function_version_function_name_suffix, var.function_version)}"
+  function_name = "${element(var.function_ids, count.index)}_RetailOrderLine"
+  # function_name = "${element(var.function_ids, count.index)}_RetailOrderLine_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderline_lambda_function.lambda_handler"
   layers        = [aws_lambda_layer_version.request-opentracing_2_0.arn, lookup(var.region_wrapper_python, var.region) ]
