@@ -8,22 +8,15 @@ instance_type = "t2.micro"
 ### Setting a region here removes the prompt - good for repetitive testing 
 #region = "2"
 
+### Enabling function_version will override the prompt for which version you want to deploy
+#function_version = "b"
+
 ### SFx Variables ###
 ### Default values are using eu0 realm - update for your specific realm ###
 access_token = "xxx"
 realm = "eu0"
-metrics_url = "https://ingest.eu0.signalfx.com"
-metrics_tracing = "https://ingest.eu0.signalfx.com/v2/trace"
-apm_environment = "Retail_Demo"
+
 # smart_agent_version = "4.20.2-1" # Optional - If left blank, latest will be installed
 smart_agent_version = "" # Optional - If left blank, latest will be installed
 
-### Ensure realm in endpoints matches realm setting above
-collector_endpoint = "https://api.eu0.signalfx.com"
-sfx_endpoint = "https://ingest.eu0.signalfx.com/v2/trace"
-environmemt = "splunk_lambda_demo"
-signalfx_span_tags = "environment:Retail_Demo, phase:Dev"
-
-collector_yaml_path = "/tmp/collector.yaml"
-collector_docker_name = "otelcontribcol"
 collector_image = "otel/opentelemetry-collector-contrib:0.14.0"

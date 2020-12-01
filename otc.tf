@@ -61,9 +61,11 @@ resource "aws_instance" "otc" {
 
       ## Set Vars for Collector
       # "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
-      "COLLECTOR_ENDPOINT=${var.collector_endpoint}",
+      # "COLLECTOR_ENDPOINT=${var.collector_endpoint}",
+      "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
       "ENVIRONMENT=${var.environmemt}",
-      "SFX_ENDPOINT=${var.sfx_endpoint}",
+      "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
+      
       "COLLECTOR_YAML_PATH=${var.collector_yaml_path}",
       "COLLECTOR_NAME=${var.collector_docker_name}",
       "COLLECTOR_IMAGE=${var.collector_image}",
@@ -73,7 +75,8 @@ resource "aws_instance" "otc" {
       "echo ${var.access_token} > /tmp/access_token",
       "echo ${var.realm} > /tmp/realm",
       "echo ${var.environmemt} > /tmp/environment",
-      "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
+      # "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
+      "echo https://ingest.${var.realm}.signalfx.com/v2/trace > /tmp/sfx_endpoint",
 
       ## Generate signalfx-collector.yaml file
       "sudo chmod +x /tmp/generate_signalfx_collector.sh",

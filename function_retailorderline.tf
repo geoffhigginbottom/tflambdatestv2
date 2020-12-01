@@ -32,11 +32,12 @@ resource "aws_lambda_function" "retailorderline" {
 
   environment {
     variables = {
-      LAMBDA_FUNCTION_NAME = "${element(var.function_ids, count.index)}_RetailOrder_${lookup(var.function_version_function_name_suffix, var.function_version)}"
-      SIGNALFX_ACCESS_TOKEN = var.access_token
+      LAMBDA_FUNCTION_NAME     = "${element(var.function_ids, count.index)}_RetailOrder"
+      # LAMBDA_FUNCTION_NAME     = "${element(var.function_ids, count.index)}_RetailOrder_${lookup(var.function_version_function_name_suffix, var.function_version)}"
+      SIGNALFX_ACCESS_TOKEN    = var.access_token
       SIGNALFX_APM_ENVIRONMENT = var.apm_environment
-      SIGNALFX_METRICS_URL = var.metrics_url
-      SIGNALFX_TRACING_URL = var.metrics_tracing
+      SIGNALFX_METRICS_URL     = "https://ingest.${var.realm}.signalfx.com"
+      SIGNALFX_TRACING_URL     = "https://ingest.${var.realm}.signalfx.com/v2/trace"
     }
   }
 }

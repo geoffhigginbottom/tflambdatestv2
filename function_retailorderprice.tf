@@ -32,12 +32,12 @@ resource "aws_lambda_function" "retailorderprice" {
 
   environment {
     variables = {
-      DISCOUNT_HOST                 = aws_ssm_parameter.retaildiscount_invoke_url[count.index].value
-      DISCOUNT_PATH                 = aws_ssm_parameter.retailorderdiscount_path[count.index].value
-      SIGNALFX_ACCESS_TOKEN         = var.access_token
-      SIGNALFX_APM_ENVIRONMENT      = var.apm_environment
-      SIGNALFX_METRICS_URL          = var.metrics_url
-      SIGNALFX_ENDPOINT_URL          = var.metrics_tracing
+      DISCOUNT_HOST            = aws_ssm_parameter.retaildiscount_invoke_url[count.index].value
+      DISCOUNT_PATH            = aws_ssm_parameter.retailorderdiscount_path[count.index].value
+      SIGNALFX_ACCESS_TOKEN    = var.access_token
+      SIGNALFX_APM_ENVIRONMENT = var.apm_environment
+      SIGNALFX_METRICS_URL     = "https://ingest.${var.realm}.signalfx.com"
+      SIGNALFX_ENDPOINT_URL    = "https://ingest.${var.realm}.signalfx.com/v2/trace"
     }
   }
 }
