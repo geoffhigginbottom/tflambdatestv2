@@ -75,67 +75,47 @@ variable "region_wrapper_nodejs" {
 ## Select beteen APM and Base version of the Functions
 variable "function_version" {
   description = "Select Function Version (a:apm, b:base)"
-  # description = "Select Function Version (a:apm, b:base, c:test_apm, d:test_base)"
 }
 
 variable "function_version_function_name_suffix" {
   default = {
     "a" = "apm"
     "b" = "base"
-    # "c" = "test_apm"
-    # "d" = "test_base"
   }
 }
 
 variable "function_version_function_retailorder_url" {
   default = {
-    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderAPM/Lambda_Function.py"
-    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrder/Lambda_Function.py"
-    # "c" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrder/APM/Lambda_Function.py"
-    # "d" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrder/Base/Lambda_Function.py"
+    "a" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderAPM/Lambda_Function.py"
+    "b" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/Base/RetailOrder/Lambda_Function.py"
   }
 }
 
 variable "function_version_function_retailorderline_url" {
   default = {
-    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderLineAPM/Lambda_Function.py"
-    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderLine/Lambda_Function.py"
-    # "c" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderLine/APM/Lambda_Function.py"
-    # "d" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderLine/Base/Lambda_Function.py"
+    "a" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderLineAPM/Lambda_Function.py"
+    "b" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderLine/Lambda_Function.py"
   }
 }
 
 variable "function_version_function_retailorderprice_url" {
   default = {
-    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderPriceAPM/index.js"
-    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderPrice/index.js"
-    # "c" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderPrice/APM/index.js"
-    # "d" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailOrderPrice/Base/index.js"
+    "a" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/APM/RetailOrderPriceAPM/index.js"
+    "b" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/Base/RetailOrderPrice/index.js"
   }
 }
 
 variable "function_version_function_retailorderdiscount_url" {
   default = {
-    "a" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/APM/RetailDiscountAPM/index.js"
-    "b" = "https://raw.githubusercontent.com/p-hagen-Signalfx/SplunkLambdaAPM/master/Lambdas/Base/RetailDiscount/index.js"
-    # "c" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/APM/index.js"
-    # "d" = "https://raw.githubusercontent.com/geoffhigginbottom/lambda_functions/main/RetailDiscount/Base/index.js"
+    "a" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/APM/RetailDiscountAPM/index.js"
+    "b" = "https://raw.githubusercontent.com/hagen-p/SplunkLambdaAPM/master/Lambdas/Base/RetailDiscount/index.js"
   }
 }
 
 ## URL for the Java App - pulls it from the listed Git Repo
 variable "java_app_url" {
-  default = "https://github.com/p-hagen-Signalfx/SplunkLambdaAPM.git"
+  default = "https://github.com/hagen-p/SplunkLambdaAPM.git"
 }
-
-# variable "function_version_app_version" {
-#   default = {
-#     "a" = "JavaLambdaAPM"
-#     "b" = "JavaLambdaBase"
-#     "c" = "JavaLambdaAPM"
-#     "d" = "JavaLambdaBase"
-#   }
-# }
 
 # variable "function_version_app_version" {
 #   default = "JavaLambdaBase"
