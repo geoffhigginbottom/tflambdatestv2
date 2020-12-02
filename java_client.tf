@@ -29,7 +29,10 @@ resource "aws_instance" "java_client" {
     destination = "/tmp/splunk_lambda_apm.service"
   }
 
-  
+  provisioner "file" {
+    source      = "./scripts/generate_update_sfx_environment.sh"
+    destination = "/tmp/generate_update_sfx_environment.sh"
+  }
 
   provisioner "remote-exec" {
     inline = [
@@ -46,6 +49,14 @@ resource "aws_instance" "java_client" {
       "AGENTVERSION=${var.smart_agent_version}",
       "sudo chmod +x /tmp/install_smart_agent.sh",
       "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
+
+      "sudo chmod +x /tmp/generate_update_sfx_environment.sh",
+      "ENVIRONMENT=${var.environmemt}",
+      "ENV_PREFIX=${element(var.function_ids, count.index)}",
+      "sudo /tmp/generate_update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
+      "sudo chmod +x /tmp/update_sfx_environment.sh",
+      "sudo /tmp/update_sfx_environment.sh",
+
       # "sudo mv /tmp/agent.yaml /etc/signalfx/agent.yaml",
       # "sudo chown root:root /etc/signalfx/agent.yaml",
       # "sudo apt-mark hold signalfx-agent",
