@@ -10,6 +10,7 @@ cat << EOF > /tmp/update_sfx_environment.sh
 #! /bin/bash
 # Version 2.0
 
+sed -i -e "s+    #defaultSpanTags:+    defaultSpanTags:+g" /etc/signalfx/agent.yaml
 sed -i -e "s+     #environment: \"YOUR_ENVIRONMENT\"+     environment: \"$ENV_PREFIX\_$ENVIRONMENT\"+g" /etc/signalfx/agent.yaml 
 
 EOF
