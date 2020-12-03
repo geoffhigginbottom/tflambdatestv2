@@ -6,7 +6,6 @@ resource "aws_instance" "otc" {
   vpc_security_group_ids  = [aws_security_group.splunk_otc.id]
   tags = {
     Name  = lower("${element(var.function_ids, count.index)}_otc")
-    # Role  = "Open Telemetry Collector"
   }
 
   provisioner "file" {
@@ -20,13 +19,13 @@ resource "aws_instance" "otc" {
   }
 
   provisioner "file" {
-    source      = "./scripts/generate_otc_startup.sh"
-    destination = "/tmp/generate_otc_startup.sh"
+    source      = "./scripts/otc_startup.sh"
+    destination = "/tmp/otc_startup.sh"
   }
 
  provisioner "file" {
-    source      = "./scripts/generate_update_sfx_environment.sh"
-    destination = "/tmp/generate_update_sfx_environment.sh"
+    source      = "./scripts/update_sfx_environment.sh"
+    destination = "/tmp/update_sfx_environment.sh"
   }
 
   provisioner "remote-exec" {
@@ -44,18 +43,10 @@ resource "aws_instance" "otc" {
       "AGENTVERSION=${var.smart_agent_version}",
       "sudo chmod +x /tmp/install_smart_agent.sh",
       "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
-      
-      "sudo chmod +x /tmp/generate_update_sfx_environment.sh",
+      "sudo chmod +x /tmp/update_sfx_environment.sh",
       "ENVIRONMENT=${var.environmemt}",
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
-      "sudo /tmp/generate_update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
-      "sudo chmod +x /tmp/update_sfx_environment.sh",
-      "sudo /tmp/update_sfx_environment.sh",
-
-      # "sudo mv /tmp/agent.yaml /etc/signalfx/agent.yaml",
-      # "sudo chown root:root /etc/signalfx/agent.yaml",
-      # "sudo apt-mark hold signalfx-agent",
-      # "sudo service signalfx-agent restart",
+      "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
 
       ## Install shellinabox (used to enable shell access via browser)
       "sudo apt-get install shellinabox -y",
@@ -94,13 +85,9 @@ resource "aws_instance" "otc" {
       "sudo chmod +x /tmp/generate_signalfx_collector.sh",
       "sudo /tmp/generate_signalfx_collector.sh $COLLECTOR_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
 
-      ## Generate generate_otc_startup.sh file
-      "sudo chmod +x /tmp/generate_otc_startup.sh",
-      "sudo /tmp/generate_otc_startup.sh $COLLECTOR_YAML_PATH $COLLECTOR_NAME $COLLECTOR_IMAGE",
-
       ## Run collector
-      "sudo chmod +x /tmp/otc-startup.sh",
-      "sudo /tmp/otc-startup.sh",
+      "sudo chmod +x /tmp/otc_startup.sh",
+      "sudo /tmp/otc_startup.sh $COLLECTOR_YAML_PATH $COLLECTOR_NAME $COLLECTOR_IMAGE",
     ]  
   }
 
