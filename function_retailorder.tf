@@ -23,7 +23,6 @@ resource "aws_lambda_function" "retailorder" {
   count         = var.function_count
   filename      = "retailorder_lambda.zip"
   function_name = "${element(var.function_ids, count.index)}_RetailOrder"
-  # function_name = "${element(var.function_ids, count.index)}_RetailOrder_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorder_lambda_function.lambda_handler"
   layers        = [aws_lambda_layer_version.request-opentracing_2_0.arn, lookup(var.region_wrapper_python, var.region) ]
@@ -35,7 +34,7 @@ resource "aws_lambda_function" "retailorder" {
       ORDER_LINE               = aws_lambda_function.retailorderline[count.index].arn
       PRICE_URL                = aws_api_gateway_deployment.retailorderprice[count.index].invoke_url
       SIGNALFX_ACCESS_TOKEN    = var.access_token
-      SIGNALFX_APM_ENVIRONMENT = var.apm_environment
+      SIGNALFX_APM_ENVIRONMENT = "${element(var.function_ids, count.index)}_${var.environment}"
       SIGNALFX_METRICS_URL     = "https://ingest.${var.realm}.signalfx.com"
       SIGNALFX_TRACING_URL     = "https://ingest.${var.realm}.signalfx.com/v2/trace"
     }

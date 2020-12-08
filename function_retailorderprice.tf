@@ -23,7 +23,6 @@ resource "aws_lambda_function" "retailorderprice" {
   count         = var.function_count
   filename      = "retailorderprice_lambda.zip"
   function_name = "${element(var.function_ids, count.index)}_RetailOrderPrice"
-  # function_name = "${element(var.function_ids, count.index)}_RetailOrderPrice_${lookup(var.function_version_function_name_suffix, var.function_version)}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "retailorderprice_index.handler"
   layers        = [lookup(var.region_wrapper_nodejs, var.region)]
@@ -35,7 +34,7 @@ resource "aws_lambda_function" "retailorderprice" {
       DISCOUNT_HOST            = aws_ssm_parameter.retaildiscount_invoke_url[count.index].value
       DISCOUNT_PATH            = aws_ssm_parameter.retailorderdiscount_path[count.index].value
       SIGNALFX_ACCESS_TOKEN    = var.access_token
-      SIGNALFX_APM_ENVIRONMENT = var.apm_environment
+      SIGNALFX_APM_ENVIRONMENT = "${element(var.function_ids, count.index)}_${var.environment}"
       SIGNALFX_METRICS_URL     = "https://ingest.${var.realm}.signalfx.com"
       SIGNALFX_ENDPOINT_URL    = "https://ingest.${var.realm}.signalfx.com/v2/trace"
     }

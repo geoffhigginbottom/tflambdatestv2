@@ -44,7 +44,7 @@ resource "aws_instance" "otc" {
       "sudo chmod +x /tmp/install_smart_agent.sh",
       "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
       "sudo chmod +x /tmp/update_sfx_environment.sh",
-      "ENVIRONMENT=${var.environmemt}",
+      "ENVIRONMENT=${var.environment}",
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
       "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
 
@@ -66,7 +66,7 @@ resource "aws_instance" "otc" {
       # "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
       # "COLLECTOR_ENDPOINT=${var.collector_endpoint}",
       "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
-      "ENVIRONMENT=${var.environmemt}",
+      "ENVIRONMENT=${var.environment}",
       "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
       
       "COLLECTOR_YAML_PATH=${var.collector_yaml_path}",
@@ -77,7 +77,7 @@ resource "aws_instance" "otc" {
       # "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
       "echo ${var.access_token} > /tmp/access_token",
       "echo ${var.realm} > /tmp/realm",
-      "echo ${var.environmemt} > /tmp/environment",
+      "echo ${var.environment} > /tmp/environment",
       # "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
       "echo https://ingest.${var.realm}.signalfx.com/v2/trace > /tmp/sfx_endpoint",
 

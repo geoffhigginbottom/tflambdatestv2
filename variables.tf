@@ -117,10 +117,6 @@ variable "java_app_url" {
   default = "https://github.com/hagen-p/SplunkLambdaAPM.git"
 }
 
-# variable "function_version_app_version" {
-#   default = "JavaLambdaBase"
-# }
-
 variable "lambda_initiate_lambda_role_arn" {
   default = []
 }
@@ -168,10 +164,6 @@ variable "metrics_tracing" {
   default = []
 }
 
-variable "apm_environment" {
-  default = "Retail_Demo"
-}
-
 variable "smart_agent_version" {
   default = []
 }
@@ -188,11 +180,7 @@ variable "sfx_endpoint" {
   default = []
 }
 
-variable "signalfx_span_tags" {
-  default = "environment:Retail_Demo"
-}
-
-variable "environmemt" {
+variable "environment" {
   default = "Retail_Demo"
 }
 

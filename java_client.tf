@@ -33,11 +33,6 @@ resource "aws_instance" "java_client" {
     destination = "/tmp/run_splunk_lambda_base.sh"
   }
 
-  # provisioner "file" {
-  #   source      = "./config_files/splunk_lambda_apm.service"
-  #   destination = "/tmp/splunk_lambda_apm.service"
-  # }
-
   provisioner "remote-exec" {
     inline = [
       # Set Hostname
@@ -54,7 +49,7 @@ resource "aws_instance" "java_client" {
       "sudo chmod +x /tmp/install_smart_agent.sh",
       "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
       "sudo chmod +x /tmp/update_sfx_environment.sh",
-      "ENVIRONMENT=${var.environmemt}",
+      "ENVIRONMENT=${var.environment}",
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
       "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
 
@@ -65,15 +60,16 @@ resource "aws_instance" "java_client" {
       "sudo service shellinabox restart",
 
       ## Write Vars to file (used for debugging)
-      "echo ${var.access_token} > /tmp/access_token",
-      "echo ${var.realm} > /tmp/realm",
+      # "echo ${var.access_token} > /tmp/access_token",
+      # "echo ${var.realm} > /tmp/realm",
             
       ## Install Maven
       "JAVA_APP_URL=${var.java_app_url}",
       "INVOKE_URL=${aws_api_gateway_deployment.retailorder[count.index].invoke_url}",
       "sudo chmod +x /tmp/java_app.sh",
-      "sudo /tmp/java_app.sh $JAVA_APP_URL $INVOKE_URL",
-      
+      "ENV_PREFIX=${element(var.function_ids, count.index)}",
+      "sudo /tmp/java_app.sh $JAVA_APP_URL $INVOKE_URL $ENV_PREFIX",
+
       ## Install seige pre-reqs
       "sudo apt-get update",
       "sudo apt install looptools -y",
@@ -87,21 +83,6 @@ resource "aws_instance" "java_client" {
 
       ## Set correct permissions on SplunkLambdaAPM directory
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/SplunkLambdaAPM",
-
-      ## Set Java App to auto run
-      # "APP_VERSION=${tostring(var.function_version_app_version)}",
-      # "APP_VERSION=${var.function_version_app_version}",
-      # "echo $APP_VERSION > /tmp/APP_VERSION", # debugging
-      # "sudo chmod +x /tmp/run_splunk_lambda_apm.sh",
-      # "sudo chmod +x /tmp/run_splunk_lambda_base.sh",
-      # "sudo mv /tmp/run_splunk_lambda_apm.sh /usr/local/bin/run_splunk_lambda_apm.sh",
-      # "sudo chown root:root /usr/local/bin/run_splunk_lambda_apm.sh",
-      # "sudo chmod +x /usr/local/bin/run_splunk_lambda_apm.sh",
-      # "sudo mv /tmp/splunk_lambda_apm.service /lib/systemd/system/splunk_lambda_apm.service",
-      # "sudo chown root:root /lib/systemd/system/splunk_lambda_apm.service",
-      # "sudo systemctl enable splunk_lambda_apm.service",
-      # "sudo systemctl daemon-reload",
-      # "sudo systemctl restart splunk_lambda_apm"
     ]  
   }
 
