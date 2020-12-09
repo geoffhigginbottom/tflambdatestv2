@@ -1,0 +1,5 @@
+#cloud-config
+ssh_pwauth: yes
+password: Observability2020!
+chpasswd:
+  expire: false

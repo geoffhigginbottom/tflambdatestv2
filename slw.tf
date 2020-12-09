@@ -4,6 +4,7 @@ resource "aws_instance" "slw" {
   instance_type           = var.instance_type
   key_name                = var.key_name
   vpc_security_group_ids  = [aws_security_group.splunk_lambda_workshop.id]
+  user_data               = file("cloud-init/slw.yaml")
   tags = {
     Name  = lower("${element(var.function_ids, count.index)}_slw")
   }
@@ -120,14 +121,20 @@ resource "aws_instance" "slw" {
       "sudo apt install looptools -y",
       "sudo apt install siege -y",
 
-      ## Java App Helper Scripts
-      "sudo chmod +x /tmp/run_splunk_lambda_apm.sh",
-      "sudo chmod +x /tmp/run_splunk_lambda_base.sh",
-      "sudo mv /tmp/run_splunk_lambda_apm.sh /home/ubuntu/run_splunk_lambda_apm.sh",
-      "sudo mv /tmp/run_splunk_lambda_base.sh /home/ubuntu/run_splunk_lambda_base.sh",
+      # ## Java App Helper Scripts
+      # "sudo chmod +x /tmp/run_splunk_lambda_apm.sh",
+      # "sudo chmod +x /tmp/run_splunk_lambda_base.sh",
+      # "sudo mv /tmp/run_splunk_lambda_apm.sh /home/ubuntu/run_splunk_lambda_apm.sh",
+      # "sudo mv /tmp/run_splunk_lambda_base.sh /home/ubuntu/run_splunk_lambda_base.sh",
 
       ## Set correct permissions on SplunkLambdaAPM directory
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/SplunkLambdaAPM",
+
+      ## Configure motd
+      # "sudo apt install curl -y",
+      "sudo curl -s https://raw.githubusercontent.com/signalfx/observability-workshop/master/cloud-init/motd -o /etc/motd",
+      "sudo chmod -x /etc/update-motd.d/*",
+
     ]  
   }
 
