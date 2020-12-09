@@ -24,6 +24,6 @@ realm = "xxx"
 # smart_agent_version = "5.6.0-1" # Optional - If left blank, latest will be installed
 smart_agent_version = "" # Optional - If left blank, latest will be installed
 
-## Latest otel collector releases can be found at 
-## https://github.com/open-telemetry/opentelemetry-collector-contrib/releases
-collector_image = "otel/opentelemetry-collector-contrib:0.15.0"
+### https://quay.io/repository/signalfx/splunk-otel-collector?tab=tags
+otelcol_version = "0.3.0"
+ballast = "683"

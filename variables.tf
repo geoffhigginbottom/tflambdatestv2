@@ -156,27 +156,7 @@ variable "realm" {
   default = []
 }
 
-variable "metrics_url" {
-  default = []
-}
-
-variable "metrics_tracing" {
-  default = []
-}
-
 variable "smart_agent_version" {
-  default = []
-}
-
-variable "collector_endpoint" {
-  default = []
-}
-
-variable "zpages_endpoint" {
-  default = []
-}
-
-variable "sfx_endpoint" {
   default = []
 }
 
@@ -188,10 +168,11 @@ variable "collector_yaml_path" {
   default = "/tmp/collector.yaml"
 }
 
-variable "collector_docker_name" {
-  default = "otelcontribcol"
+### https://quay.io/repository/signalfx/splunk-otel-collector?tab=tags
+variable "otelcol_version" {
+  default = []
 }
 
-variable "collector_image" {
+variable "ballast" {
   default = []
 }

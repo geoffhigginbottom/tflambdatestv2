@@ -65,8 +65,10 @@ resource "aws_instance" "slw" {
       "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
 
       ## Write Vars to file (used for debugging)
-      # "echo ${var.access_token} > /tmp/access_token",
-      # "echo ${var.realm} > /tmp/realm",
+      "echo ${var.access_token} > /tmp/access_token",
+      "echo ${var.realm} > /tmp/realm",
+      "echo ${var.environment} > /tmp/environment",
+      "echo https://ingest.${var.realm}.signalfx.com/v2/trace > /tmp/sfx_endpoint",
 
       ## Install shellinabox (used to enable shell access via browser)
       "sudo apt-get install shellinabox -y",
@@ -83,23 +85,15 @@ resource "aws_instance" "slw" {
       "sudo systemctl enable docker",
 
       ## Set Vars for Collector
-      # "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
-      # "COLLECTOR_ENDPOINT=${var.collector_endpoint}",
       "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
-      "ENVIRONMENT=${var.environment}",
+      # "ENVIRONMENT=${var.environment}",
+      "ENVIRONMENT=${element(var.function_ids, count.index)}_${var.environment}",
       "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
-      
-      "COLLECTOR_YAML_PATH=${var.collector_yaml_path}",
-      "COLLECTOR_NAME=${var.collector_docker_name}",
-      "COLLECTOR_IMAGE=${var.collector_image}",
-
-      ## Write Vars to file (used for debugging)
-      # "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
-      "echo ${var.access_token} > /tmp/access_token",
-      "echo ${var.realm} > /tmp/realm",
-      "echo ${var.environment} > /tmp/environment",
-      # "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
-      "echo https://ingest.${var.realm}.signalfx.com/v2/trace > /tmp/sfx_endpoint",
+      "TOKEN=${var.access_token}",
+      "REALM=${var.realm}",
+      "BALLAST=${var.ballast}",
+      "SPLUNK_CONFIG=${var.collector_yaml_path}",
+      "OTELCOL_VERSION=${var.otelcol_version}",
 
       ## Generate signalfx-collector.yaml file
       "sudo chmod +x /tmp/generate_signalfx_collector.sh",
@@ -107,7 +101,7 @@ resource "aws_instance" "slw" {
 
       ## Run collector
       "sudo chmod +x /tmp/otc_startup.sh",
-      "sudo /tmp/otc_startup.sh $COLLECTOR_YAML_PATH $COLLECTOR_NAME $COLLECTOR_IMAGE",
+      "sudo /tmp/otc_startup.sh $TOKEN $BALLAST $REALM $SPLUNK_CONFIG $OTELCOL_VERSION",
 
       ## Install Maven
       "JAVA_APP_URL=${var.java_app_url}",
