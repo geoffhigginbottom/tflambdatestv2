@@ -1,11 +1,11 @@
-resource "aws_instance" "java_client" {
+resource "aws_instance" "slw" {
   count                   = var.function_count
   ami                     = data.aws_ami.latest-ubuntu.id
   instance_type           = var.instance_type
   key_name                = var.key_name
-  vpc_security_group_ids  = [aws_security_group.splunk_jc.id]
+  vpc_security_group_ids  = [aws_security_group.splunk_lambda_workshop.id]
   tags = {
-    Name  = lower("${element(var.function_ids, count.index)}_jc")
+    Name  = lower("${element(var.function_ids, count.index)}_slw")
   }
 
   provisioner "file" {
@@ -14,6 +14,16 @@ resource "aws_instance" "java_client" {
   }
 
   provisioner "file" {
+    source      = "./scripts/generate_signalfx_collector.sh"
+    destination = "/tmp/generate_signalfx_collector.sh"
+  }
+
+  provisioner "file" {
+    source      = "./scripts/otc_startup.sh"
+    destination = "/tmp/otc_startup.sh"
+  }
+
+ provisioner "file" {
     source      = "./scripts/update_sfx_environment.sh"
     destination = "/tmp/update_sfx_environment.sh"
   }
@@ -23,15 +33,15 @@ resource "aws_instance" "java_client" {
     destination = "/tmp/java_app.sh"
   }
 
-  provisioner "file" {
-    source      = "./scripts/run_splunk_lambda_apm.sh"
-    destination = "/tmp/run_splunk_lambda_apm.sh"
-  }
+  # provisioner "file" {
+  #   source      = "./scripts/run_splunk_lambda_apm.sh"
+  #   destination = "/tmp/run_splunk_lambda_apm.sh"
+  # }
 
-  provisioner "file" {
-    source      = "./scripts/run_splunk_lambda_base.sh"
-    destination = "/tmp/run_splunk_lambda_base.sh"
-  }
+  # provisioner "file" {
+  #   source      = "./scripts/run_splunk_lambda_base.sh"
+  #   destination = "/tmp/run_splunk_lambda_base.sh"
+  # }
 
   provisioner "remote-exec" {
     inline = [
@@ -53,16 +63,51 @@ resource "aws_instance" "java_client" {
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
       "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
 
+      ## Write Vars to file (used for debugging)
+      # "echo ${var.access_token} > /tmp/access_token",
+      # "echo ${var.realm} > /tmp/realm",
+
       ## Install shellinabox (used to enable shell access via browser)
       "sudo apt-get install shellinabox -y",
       "sudo sed -i 's/SHELLINABOX_PORT=4200/SHELLINABOX_PORT=6501/'  /etc/default/shellinabox",
       "sudo sed -i \"s/\"--no-beep\"/\"--no-beep --disable-ssl\"/\" /etc/default/shellinabox",
       "sudo service shellinabox restart",
 
+      ## Install Docker
+      "sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y",
+      "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+      "sudo add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
+      "sudo apt-get update",
+      "sudo apt-get install docker-ce docker-ce-cli containerd.io -y",
+      "sudo systemctl enable docker",
+
+      ## Set Vars for Collector
+      # "ZPAGES_ENDPOINT=${var.zpages_endpoint}",
+      # "COLLECTOR_ENDPOINT=${var.collector_endpoint}",
+      "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
+      "ENVIRONMENT=${var.environment}",
+      "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
+      
+      "COLLECTOR_YAML_PATH=${var.collector_yaml_path}",
+      "COLLECTOR_NAME=${var.collector_docker_name}",
+      "COLLECTOR_IMAGE=${var.collector_image}",
+
       ## Write Vars to file (used for debugging)
-      # "echo ${var.access_token} > /tmp/access_token",
-      # "echo ${var.realm} > /tmp/realm",
-            
+      # "echo ${var.zpages_endpoint} > /tmp/zpages_endpoint",
+      "echo ${var.access_token} > /tmp/access_token",
+      "echo ${var.realm} > /tmp/realm",
+      "echo ${var.environment} > /tmp/environment",
+      # "echo ${var.sfx_endpoint} > /tmp/sfx_endpoint",
+      "echo https://ingest.${var.realm}.signalfx.com/v2/trace > /tmp/sfx_endpoint",
+
+      ## Generate signalfx-collector.yaml file
+      "sudo chmod +x /tmp/generate_signalfx_collector.sh",
+      "sudo /tmp/generate_signalfx_collector.sh $COLLECTOR_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
+
+      ## Run collector
+      "sudo chmod +x /tmp/otc_startup.sh",
+      "sudo /tmp/otc_startup.sh $COLLECTOR_YAML_PATH $COLLECTOR_NAME $COLLECTOR_IMAGE",
+
       ## Install Maven
       "JAVA_APP_URL=${var.java_app_url}",
       "INVOKE_URL=${aws_api_gateway_deployment.retailorder[count.index].invoke_url}",
@@ -95,10 +140,10 @@ resource "aws_instance" "java_client" {
   }
 }
 
-output "Java_Client_Instances" {
+output "SLW_Instances" {
   value =  formatlist(
     "%s, %s", 
-    aws_instance.java_client.*.tags.Name,
-    aws_instance.java_client.*.public_ip,
+    aws_instance.slw.*.tags.Name,
+    aws_instance.slw.*.public_ip,
   )
 }
