@@ -12,10 +12,10 @@ ENV_PREFIX=$3
 sudo apt update 
 git clone "$JAVA_APP_URL"
 
-sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/LocalLambdaCallers/JavaLambdaAPM/src/main/java/com/sfx/JavaLambda/JavaLambdaController.java
-sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/LocalLambdaCallers/JavaLambdaBase/src/main/java/com/sfx/JavaLambda/JavaLambdaController.java
+sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/java/com/sfx/JavaLambda/JavaLambdaController.java
+sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/Base/src/main/java/com/sfx/JavaLambda/JavaLambdaController.java
 
-sed -i -e "s+REPLACE-Mobile-Web-Shop-APM+$ENV_PREFIX-Mobile-Web-Shop-APM+g" /home/ubuntu/SplunkLambdaAPM/LocalLambdaCallers/JavaLambdaAPM/src/main/resources/application.properties
-sed -i -e "s+REPLACE-Mobile-Web-Shop-Base+$ENV_PREFIX-Mobile-Web-Shop-Base+g" /home/ubuntu/SplunkLambdaAPM/LocalLambdaCallers/JavaLambdaBase/src/main/resources/application.properties
+sed -i -e "s+REPLACE-Mobile-Web-Shop-APM+$ENV_PREFIX-Mobile-Web-Shop-APM+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/resources/application.properties
+sed -i -e "s+REPLACE-Mobile-Web-Shop-Base+$ENV_PREFIX-Mobile-Web-Shop-Base+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/Base/src/main/resources/application.properties
 
 sudo apt install maven -y
