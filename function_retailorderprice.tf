@@ -130,11 +130,11 @@ resource "aws_lambda_permission" "retailorderprice_apigwapigw" {
   source_arn = "${aws_api_gateway_rest_api.retailorderprice[count.index].execution_arn}/*/*"
 }
 
-### Debugging Outputs
-output "retailorderprice_arns" {
-  value =  formatlist(
-    "%s, %s", 
-    aws_lambda_function.retailorderprice.*.function_name,
-    aws_lambda_function.retailorderprice.*.arn
-  )
-}
+# ### Debugging Outputs
+# output "retailorderprice_arns" {
+#   value =  formatlist(
+#     "%s, %s", 
+#     aws_lambda_function.retailorderprice.*.function_name,
+#     aws_lambda_function.retailorderprice.*.arn
+#   )
+# }

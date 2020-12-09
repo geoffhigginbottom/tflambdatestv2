@@ -15,11 +15,11 @@ resource "aws_ssm_parameter" "retaildiscount_invoke_url" {
   overwrite = true
 }
 
-### Debugging Outputs
-output "retaildiscount_invoke_url" {
-  value =  formatlist(
-    "%s, %s", 
-    aws_api_gateway_rest_api.retailorderdiscount.*.name,
-    aws_ssm_parameter.retaildiscount_invoke_url.*.value
-  )
-}
+# ### Debugging Outputs
+# output "retaildiscount_invoke_url" {
+#   value =  formatlist(
+#     "%s, %s", 
+#     aws_api_gateway_rest_api.retailorderdiscount.*.name,
+#     aws_ssm_parameter.retaildiscount_invoke_url.*.value
+#   )
+# }

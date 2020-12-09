@@ -138,20 +138,19 @@ resource "aws_ssm_parameter" "retailorderdiscount_path" {
   overwrite = true
 }
 
-### Debugging Outputs
-output "retailorderdiscount_path" {
-  value =  formatlist(
-    "%s, %s", 
-    aws_lambda_function.retailorderdiscount.*.function_name,
-    aws_ssm_parameter.retailorderdiscount_path.*.value
-  )
-}
+# ### Debugging Outputs
+# output "retailorderdiscount_path" {
+#   value =  formatlist(
+#     "%s, %s", 
+#     aws_lambda_function.retailorderdiscount.*.function_name,
+#     aws_ssm_parameter.retailorderdiscount_path.*.value
+#   )
+# }
 
-### Debugging Outputs
-output "retailorderdiscount_arns" {
-  value =  formatlist(
-    "%s, %s", 
-    aws_lambda_function.retailorderdiscount.*.function_name,
-    aws_lambda_function.retailorderdiscount.*.arn
-  )
-}
+# output "retailorderdiscount_arns" {
+#   value =  formatlist(
+#     "%s, %s", 
+#     aws_lambda_function.retailorderdiscount.*.function_name,
+#     aws_lambda_function.retailorderdiscount.*.arn
+#   )
+# }

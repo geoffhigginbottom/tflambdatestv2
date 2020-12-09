@@ -130,11 +130,11 @@ resource "aws_lambda_permission" "retailorder_apigw" {
   source_arn = "${aws_api_gateway_rest_api.retailorder[count.index].execution_arn}/*/*"
 }
 
-### Debugging Outputs
-output "retailorder_arns" {
-  value =  formatlist(
-    "%s, %s", 
-    aws_lambda_function.retailorder.*.function_name,
-    aws_lambda_function.retailorder.*.arn
-  )
-}
+# ### Debugging Outputs
+# output "retailorder_arns" {
+#   value =  formatlist(
+#     "%s, %s", 
+#     aws_lambda_function.retailorder.*.function_name,
+#     aws_lambda_function.retailorder.*.arn
+#   )
+# }
