@@ -41,14 +41,14 @@ receivers:
   zipkin:
 
 processors:
-  batch:
   # Optional: If you want to add an environment tag
   # If this option is enabled it must be added to the pipeline section below
-  attributes/newenvironment:
+  attributes:
     actions:
     - key: environment
       value: $ENVIRONMENT
       action: insert
+  batch:
   # Enabling the memory_limiter is strongly recommended for every pipeline.
   # Configuration is based on the amount of memory allocated to the collector.
   # The configuration below assumes 2GB of memory. In general, the ballast
@@ -93,7 +93,7 @@ service:
   pipelines:
     traces:
       receivers: [jaeger, opencensus, otlp, sapm, zipkin]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter, batch, attributes]
       exporters: [sapm, signalfx_correlation]
     metrics:
       receivers: [opencensus, otlp, signalfx, prometheus]
