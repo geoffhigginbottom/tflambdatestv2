@@ -164,7 +164,7 @@ variable "environment" {
   default = "Retail_Demo"
 }
 
-variable "collector_yaml_path" {
+variable "collector_config_path" {
   default = "/tmp/collector.yaml"
 }
 

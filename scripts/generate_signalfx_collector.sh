@@ -1,104 +1,109 @@
 #! /bin/bash
 # Version 2.0
 
-ZPAGES_ENDPOINT=$1
-ENVIRONMENT=$2
-TOKEN=$3
-SFX_ENDPOINT=$4
-REALM=$5
+ENVIRONMENT=$1
 
 cat << EOF > /tmp/collector.yaml
 
-extensions:
-  health_check:
-  http_forwarder:
-    egress:
-    #   endpoint: "https://api.${SFX_REALM}.signalfx.com"
-      # endpoint: "$ZPAGES_ENDPOINT"
-      endpoint: "$COLLECTOR_ENPOINT"
-  zpages:
+# Configuration file that uses the Splunk exporters (SAPM, SignalFX) to push
+# data to Splunk products.
+
 receivers:
-  sapm:
-  signalfx:
+  jaeger:
+    protocols:
+      grpc:
+      thrift_binary:
+      thrift_compact:
+      thrift_http:
+  opencensus:
+  otlp:
+    protocols:
+      grpc:
+      http:
   # This section is used to collect the OpenTelemetry Collector metrics
-  # Even if just a SignalFx µAPM customer, these metrics are included
+  # Even if just a Splunk µAPM customer, these metrics are included
   prometheus:
     config:
       scrape_configs:
-        - job_name: 'otel-collector'
-          scrape_interval: 10s
-          static_configs:
-            - targets: ['localhost:8888']
-              # If you want to use the environment filter
-              # In the SignalFx dashboard
-              #labels:
-                #environment: demo
-              labels:
-                environment: $ENVIRONMENT
-          metric_relabel_configs:
-            - source_labels: [ __name__ ]
-              regex: '.*grpc_io.*'
-              action: drop
-  # Enable Zipkin to support Istio Mixer Adapter
-  # https://github.com/signalfx/signalfx-istio-adapter
+      - job_name: 'otel-collector'
+        scrape_interval: 10s
+        static_configs:
+        - targets: ['0.0.0.0:8888']
+          # labels:
+          #   environment: $ENVIRONMENT
+            # Environment set here to enable filtering in the Otel dashboards
+        metric_relabel_configs:
+          - source_labels: [ __name__ ]
+            regex: '.*grpc_io.*'
+            action: drop
+  sapm:
+  signalfx:
   zipkin:
+
 processors:
   batch:
-  # Optional: If you have a different environment tag name
-  # If this option is enabled it must be added to the pipeline section below
-  #attributes/copyfromexistingkey:
-    #actions:
-    #- key: environment
-      #from_attribute: YOUR_EXISTING_TAG_NAMEE
-      #action: upsert
   # Optional: If you want to add an environment tag
   # If this option is enabled it must be added to the pipeline section below
-  #attributes/newenvironment:
-    #actions:
-    #- key: environment
-      #value: "YOUR_ENVIRONMENT_NAME"
-      #action: insert
+  attributes/newenvironment:
+    actions:
+    - key: environment
+      value: $ENVIRONMENT
+      action: insert
   # Enabling the memory_limiter is strongly recommended for every pipeline.
   # Configuration is based on the amount of memory allocated to the collector.
   # The configuration below assumes 2GB of memory. In general, the ballast
   # should be set to 1/3 of the collector's memory, the limit should be 90% of
   # the collector's memory up to 2GB, and the spike should be 25% of the
-  # collector's memory up to 2GB. In addition, the "--mem-ballast-size-mib" CLI
-  # flag must be set to the same value as the "ballast_size_mib". For more
-  # information, see
+  # collector's memory up to 2GB. The simplest way to specify the ballast size is
+  # set the value of SPLUNK_BALLAST_SIZE_MIB env variable. This will overrides
+  # the value of --mem-ballast-size-mib command line flag. If SPLUNK_BALLAST_SIZE_MIB
+  # is not defined then --mem-ballast-size-mib command line flag must be manually specified.
+  # For more information about memory limiter, see
   # https://github.com/open-telemetry/opentelemetry-collector/blob/master/processor/memorylimiter/README.md
   memory_limiter:
-    ballast_size_mib: 683
+    ballast_size_mib: \${SPLUNK_BALLAST_SIZE_MIB}
     check_interval: 2s
-    limit_mib: 1800
-    spike_limit_mib: 500
+    limit_percentage: \${SPLUNK_MEMORY_LIMIT_PERCENTAGE}
+    spike_limit_percentage: \${SPLUNK_MEMORY_SPIKE_PERCENTAGE}
+
 exporters:
   # Traces
   sapm:
-    # access_token: "${SFX_TOKEN}"
-    access_token: "$TOKEN"
-    # endpoint: "https://ingest.$REALM.signalfx.com/v2/trace"
-    endpoint: "$SFX_ENDPOINT"
+    access_token: "\${SPLUNK_ACCESS_TOKEN}"
+    endpoint: "https://ingest.\${SPLUNK_REALM}.signalfx.com/v2/trace"
+  signalfx_correlation:
+    access_token: "\${SPLUNK_ACCESS_TOKEN}"
+    endpoint: "https://api.\${SPLUNK_REALM}.signalfx.com"
   # Metrics + Events
   signalfx:
-    # access_token: "${SFX_TOKEN}"
-    access_token: "$TOKEN"
-    # realm: "${SFX_REALM}"
-    realm: "$REALM"
+    access_token: "\${SPLUNK_ACCESS_TOKEN}"
+    realm: "\${SPLUNK_REALM}"
+  #logging:
+    #loglevel: debug
+
+extensions:
+  health_check:
+  http_forwarder:
+    egress:
+      endpoint: "https://api.\${SPLUNK_REALM}.signalfx.com"
+  zpages:
+    #endpoint: 0.0.0.0:55679
+
 service:
   pipelines:
     traces:
-      receivers: [sapm, zipkin]
+      receivers: [jaeger, opencensus, otlp, sapm, zipkin]
       processors: [memory_limiter, batch]
-      exporters: [sapm]
+      exporters: [sapm, signalfx_correlation]
     metrics:
-      receivers: [signalfx, prometheus]
+      receivers: [opencensus, otlp, signalfx, prometheus]
       processors: [memory_limiter, batch]
       exporters: [signalfx]
     logs:
       receivers: [signalfx]
       processors: [memory_limiter, batch]
       exporters: [signalfx]
+
   extensions: [health_check, http_forwarder, zpages]
 
 EOF

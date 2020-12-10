@@ -20,8 +20,8 @@ resource "aws_instance" "slw" {
   }
 
   provisioner "file" {
-    source      = "./scripts/otc_startup.sh"
-    destination = "/tmp/otc_startup.sh"
+    source      = "./scripts/generate_otc_startup.sh"
+    destination = "/tmp/generate_otc_startup.sh"
   }
 
  provisioner "file" {
@@ -86,22 +86,27 @@ resource "aws_instance" "slw" {
 
       ## Set Vars for Collector
       "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
-      # "ENVIRONMENT=${var.environment}",
       "ENVIRONMENT=${element(var.function_ids, count.index)}_${var.environment}",
       "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
       "TOKEN=${var.access_token}",
       "REALM=${var.realm}",
       "BALLAST=${var.ballast}",
-      "SPLUNK_CONFIG=${var.collector_yaml_path}",
+      "COLLECTOR_CONFIG_PATH=${var.collector_config_path}",
       "OTELCOL_VERSION=${var.otelcol_version}",
 
       ## Generate signalfx-collector.yaml file
       "sudo chmod +x /tmp/generate_signalfx_collector.sh",
-      "sudo /tmp/generate_signalfx_collector.sh $COLLECTOR_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
+      "sudo /tmp/generate_signalfx_collector.sh $ENVIRONMENT",
+      # "sudo /tmp/generate_signalfx_collector.sh $COLLECTOR_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
+
+      ## Generate collector startup script so users can easily restart it
+      "sudo chmod +x /tmp/generate_otc_startup.sh",
+      "sudo /tmp/generate_otc_startup.sh $TOKEN $BALLAST $REALM $COLLECTOR_CONFIG_PATH $OTELCOL_VERSION",
 
       ## Run collector
-      "sudo chmod +x /tmp/otc_startup.sh",
-      "sudo /tmp/otc_startup.sh $TOKEN $BALLAST $REALM $SPLUNK_CONFIG $OTELCOL_VERSION",
+      "sudo chmod +x /home/ubuntu/otc_startup.sh",
+      "sudo /home/ubuntu/otc_startup.sh",
+      "sudo chown -R ubuntu:ubuntu /home/ubuntu/otc_startup.sh",
 
       ## Install Maven
       "JAVA_APP_URL=${var.java_app_url}",
