@@ -8,7 +8,7 @@ if [ -z "$1" ] ; then
   printf "Token not set, exiting ...\n"
   exit 1
 else
-  printf "Token Vriable Detected ...\n"
+  printf "Token Variable Detected ...\n"
 fi
 
 if [ -z "$2" ] ; then
