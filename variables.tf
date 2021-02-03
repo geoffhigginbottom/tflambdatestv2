@@ -164,9 +164,9 @@ variable "environment" {
   default = "Retail_Demo"
 }
 
-variable "collector_config_path" {
-  default = "/tmp/collector.yaml"
-}
+# variable "collector_config_path" {
+#   default = "/tmp/collector.yaml"
+# }
 
 ### https://quay.io/repository/signalfx/splunk-otel-collector?tab=tags
 variable "otelcol_version" {

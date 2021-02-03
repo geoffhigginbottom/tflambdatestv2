@@ -15,8 +15,13 @@ resource "aws_instance" "slw" {
   }
 
   provisioner "file" {
-    source      = "./scripts/generate_signalfx_collector.sh"
-    destination = "/tmp/generate_signalfx_collector.sh"
+    source      = "${path.module}/scripts/update_signalfx_config.sh"
+    destination = "/tmp/update_signalfx_config.sh"
+  }
+
+  provisioner "file" {
+    source      = "./config_files/collector.yaml"
+    destination = "/tmp/collector.yaml"
   }
 
   provisioner "file" {
@@ -63,6 +68,8 @@ resource "aws_instance" "slw" {
       "ENVIRONMENT=${var.environment}",
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
       "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
+      "sudo chmod +x /tmp/update_signalfx_config.sh",
+      "sudo /tmp/update_signalfx_config.sh",
 
       ## Write Vars to file (used for debugging)
       "echo ${var.access_token} > /tmp/access_token",
@@ -85,28 +92,27 @@ resource "aws_instance" "slw" {
       "sudo systemctl enable docker",
 
       ## Set Vars for Collector
-      "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
-      "ENVIRONMENT=${element(var.function_ids, count.index)}_${var.environment}",
-      "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
+      # "COLLECTOR_ENDPOINT=https://api.${var.realm}.signalfx.com",
+      # "SFX_ENDPOINT=https://ingest.${var.realm}.signalfx.com/v2/trace",
       "TOKEN=${var.access_token}",
-      "REALM=${var.realm}",
       "BALLAST=${var.ballast}",
-      "COLLECTOR_CONFIG_PATH=${var.collector_config_path}",
+      "REALM=${var.realm}",
+      # "COLLECTOR_CONFIG_PATH=${var.collector_config_path}",
       "OTELCOL_VERSION=${var.otelcol_version}",
+      "ENVIRONMENT=${element(var.function_ids, count.index)}_${var.environment}",
 
-      ## Generate signalfx-collector.yaml file
-      "sudo chmod +x /tmp/generate_signalfx_collector.sh",
-      "sudo /tmp/generate_signalfx_collector.sh $ENVIRONMENT",
-      # "sudo /tmp/generate_signalfx_collector.sh $COLLECTOR_ENDPOINT $ENVIRONMENT $TOKEN $SFX_ENDPOINT $REALM",
-
-      ## Generate collector startup script so users can easily restart it
+      ## Move collector.yaml to /home/ubuntu and update permissions
+      "sudo mv /tmp/collector.yaml /home/ubuntu/collector.yaml",
+      "sudo chown -R ubuntu:ubuntu /home/ubuntu/collector.yaml",
+      
+      ## Generate collector startup script so users can easily restart it (it gets created in /home/ubuntu)
       "sudo chmod +x /tmp/generate_otc_startup.sh",
-      "sudo /tmp/generate_otc_startup.sh $TOKEN $BALLAST $REALM $COLLECTOR_CONFIG_PATH $OTELCOL_VERSION",
+      "sudo /tmp/generate_otc_startup.sh $TOKEN $BALLAST $REALM $OTELCOL_VERSION $ENVIRONMENT",
 
       ## Run collector
       "sudo chmod +x /home/ubuntu/otc_startup.sh",
-      "sudo /home/ubuntu/otc_startup.sh",
-      "sudo chown -R ubuntu:ubuntu /home/ubuntu/otc_startup.sh",
+      "sudo chown ubuntu:ubuntu /home/ubuntu/otc_startup.sh",
+      "/home/ubuntu/otc_startup.sh",
 
       ## Install Maven
       "JAVA_APP_URL=${var.java_app_url}",
