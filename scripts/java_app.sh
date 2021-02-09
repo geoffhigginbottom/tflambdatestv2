@@ -15,7 +15,7 @@ git clone "$JAVA_APP_URL"
 sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/java/com/sfx/JavaLambda/JavaLambdaController.java
 sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/Base/src/main/java/com/sfx/JavaLambda/JavaLambdaController.java
 
-sed -i -e "s+REPLACE-Mobile-Web-Shop-APM+Locust-Mobile-Web-Shop-APM+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/resources/application.properties
+sed -i -e "s+REPLACE-Mobile-Web-Shop-APM+$ENV_PREFIX-Mobile-Web-Shop-Locust+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/resources/application.properties
 sed -i -e "s+REPLACE-Mobile-Web-Shop-Base+$ENV_PREFIX-Mobile-Web-Shop-Base+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/Base/src/main/resources/application.properties
 
 # Change the port for the APM version so the Locust load testing can run in the background - workshop users will use the base version on port 8080
