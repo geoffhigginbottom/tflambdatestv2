@@ -18,4 +18,7 @@ sed -i -e "s+REPLACEWITHRETAILORDER+$INVOKE_URL+g" /home/ubuntu/SplunkLambdaAPM/
 sed -i -e "s+REPLACE-Mobile-Web-Shop-APM+$ENV_PREFIX-Mobile-Web-Shop-APM+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/resources/application.properties
 sed -i -e "s+REPLACE-Mobile-Web-Shop-Base+$ENV_PREFIX-Mobile-Web-Shop-Base+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/Base/src/main/resources/application.properties
 
+# Change the port for the APM version so the Locust load testing can run in the background - workshop users will use the base version on port 8080
+sed -i -e "s+server.port=8080+server.port=8081+g" /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/src/main/resources/application.properties
+
 sudo apt install maven -y

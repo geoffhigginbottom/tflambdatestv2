@@ -15,7 +15,7 @@ resource "aws_instance" "slw" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/scripts/update_signalfx_config.sh"
+    source      = "./scripts/update_signalfx_config.sh"
     destination = "/tmp/update_signalfx_config.sh"
   }
 
@@ -39,14 +39,39 @@ resource "aws_instance" "slw" {
     destination = "/tmp/java_app.sh"
   }
 
-  provisioner "file" {
-    source      = "./scripts/run_splunk_lambda_apm.sh"
-    destination = "/tmp/run_splunk_lambda_apm.sh"
-  }
+  # provisioner "file" {
+  #   source      = "./scripts/run_splunk_lambda_apm.sh"
+  #   destination = "/tmp/run_splunk_lambda_apm.sh"
+  # }
 
   provisioner "file" {
     source      = "./scripts/run_splunk_lambda_base.sh"
     destination = "/tmp/run_splunk_lambda_base.sh"
+  }
+
+    provisioner "file" {
+    source      = "./scripts/phoneshop_service.sh"
+    destination = "/tmp/phoneshop_service.sh"
+  }
+
+  provisioner "file" {
+    source      = "./config_files/phoneshop.service"
+    destination = "/tmp/phoneshop.service"
+  }
+
+  provisioner "file" {
+    source      = "./scripts/locustfile.py"
+    destination = "/tmp/locustfile.py"
+  }
+
+  provisioner "file" {
+    source      = "./config_files/locust.service"
+    destination = "/tmp/locust.service"
+  }
+
+  provisioner "file" {
+    source      = "./scripts/start_load_gen.sh"
+    destination = "/tmp/start_load_gen.sh"
   }
 
   provisioner "remote-exec" {
@@ -62,12 +87,15 @@ resource "aws_instance" "slw" {
       "REALM=${var.realm}",
       "HOSTNAME=${self.tags.Name}",
       "AGENTVERSION=${var.smart_agent_version}",
-      "sudo chmod +x /tmp/install_smart_agent.sh",
-      "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
-      "sudo chmod +x /tmp/update_sfx_environment.sh",
       "ENVIRONMENT=${var.environment}",
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
+
+      "sudo chmod +x /tmp/install_smart_agent.sh",
+      "sudo /tmp/install_smart_agent.sh $TOKEN $REALM $AGENTVERSION",
+      
+      "sudo chmod +x /tmp/update_sfx_environment.sh",      
       "sudo /tmp/update_sfx_environment.sh $ENVIRONMENT $ENV_PREFIX",
+      
       "sudo chmod +x /tmp/update_signalfx_config.sh",
       "sudo /tmp/update_signalfx_config.sh",
 
@@ -77,12 +105,13 @@ resource "aws_instance" "slw" {
       "echo ${var.environment} > /tmp/environment",
       "echo https://ingest.${var.realm}.signalfx.com/v2/trace > /tmp/sfx_endpoint",
 
-    ## Install shellinabox (used to enable shell access via browser)
-      "sudo apt-get install shellinabox -y",
-      "sudo sed -i 's/SHELLINABOX_PORT=4200/SHELLINABOX_PORT=6501/'  /etc/default/shellinabox",
-      "sudo sed -i \"s/\"--no-beep\"/\"--no-beep --disable-ssl\"/\" /etc/default/shellinabox",
-      "sudo service shellinabox restart",
+    # ## Install shellinabox (used to enable shell access via browser)
+    #   "sudo apt-get install shellinabox -y",
+    #   "sudo sed -i 's/SHELLINABOX_PORT=4200/SHELLINABOX_PORT=6501/'  /etc/default/shellinabox",
+    #   "sudo sed -i \"s/\"--no-beep\"/\"--no-beep --disable-ssl\"/\" /etc/default/shellinabox",
+    #   "sudo service shellinabox restart",
 
+  ## Collector
     ## Install Docker
       "sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y",
       "sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
@@ -110,27 +139,52 @@ resource "aws_instance" "slw" {
       "sudo chmod +x /home/ubuntu/otc_startup.sh",
       "sudo chown ubuntu:ubuntu /home/ubuntu/otc_startup.sh",
       "/home/ubuntu/otc_startup.sh",
-
-    ## Install Maven
+  
+  ## Phone Shop App
+    ## Install Maven and update cofiguration
       "JAVA_APP_URL=${var.java_app_url}",
       "INVOKE_URL=${aws_api_gateway_deployment.retailorder[count.index].invoke_url}",
       "sudo chmod +x /tmp/java_app.sh",
       "ENV_PREFIX=${element(var.function_ids, count.index)}",
       "sudo /tmp/java_app.sh $JAVA_APP_URL $INVOKE_URL $ENV_PREFIX",
 
-    ## Install seige pre-reqs
-      "sudo apt-get update",
-      "sudo apt install looptools -y",
-      "sudo apt install siege -y",
-
-    ## Java App Helper Scripts
-      "sudo chmod +x /tmp/run_splunk_lambda_apm.sh",
-      "sudo chmod +x /tmp/run_splunk_lambda_base.sh",
-      "sudo mv /tmp/run_splunk_lambda_apm.sh /home/ubuntu/run_splunk_lambda_apm.sh",
-      "sudo mv /tmp/run_splunk_lambda_base.sh /home/ubuntu/run_splunk_lambda_base.sh",
+    ## create clean version so we can run as a service
+      "cd /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/ && sudo mvn clean package",
 
     ## Set correct permissions on SplunkLambdaAPM directory
       "sudo chown -R ubuntu:ubuntu /home/ubuntu/SplunkLambdaAPM",
+
+    ## Java App Helper Scripts
+      "sudo chmod +x /tmp/start_load_gen.sh",
+      "sudo chmod +x /tmp/run_splunk_lambda_base.sh",
+      "sudo mv /tmp/start_load_gen.sh /home/ubuntu/start_load_gen.sh",
+      "sudo mv /tmp/run_splunk_lambda_base.sh /home/ubuntu/run_splunk_lambda_base.sh",
+
+    ## Prepare phoneshop to run APM version as a service
+      "sudo chmod +x /tmp/phoneshop_service.sh",
+      "sudo chown root:root /tmp/phoneshop_service.sh",
+      "sudo chmod +x /tmp/phoneshop.service",
+      "sudo chown root:root /tmp/phoneshop.service",
+      "sudo mv /tmp/phoneshop_service.sh /usr/local/bin/phoneshop_service.sh",
+      "sudo mv /tmp/phoneshop.service /etc/systemd/system/phoneshop.service",
+      "sudo systemctl daemon-reload",
+      "sudo chown -R ubuntu:ubuntu /home/ubuntu/SplunkLambdaAPM/MobileShop/APM/target",
+      "sudo service phoneshop stop", # we dont want it running just yet!
+
+    ## Install Locust.io for load generation
+      ## Locust will generate a random load against the phone shop app
+      ## ensuring traces are generated on a regular basis to keep APM
+      ## dashboards alive - Phone Shop UI can be used to inject bad data
+      ## http://<public-ip-address>:8080/order
+      "sudo apt-get install python3 -y",
+      "sudo apt-get install python3-pip -y",
+      "sudo -H pip3 install locust",
+      "sudo chmod +x locustfile.py",
+      "sudo chmod +x locustfile.service",
+      "sudo mv /tmp/locustfile.py /home/ubuntu/locustfile.py",
+      "sudo mv /tmp/locust.service /etc/systemd/system/locust.service",
+      "sudo systemctl daemon-reload",
+      "sudo service locust stop", # we dont want it running just yet!
 
     ## Configure motd
       "sudo curl -s https://raw.githubusercontent.com/signalfx/observability-workshop/master/cloud-init/motd -o /etc/motd",

@@ -15,12 +15,19 @@ resource "aws_security_group" "splunk_lambda_workshop" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 6501
-    to_port     = 6501
+    ingress {
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  # ingress {
+  #   from_port   = 6501
+  #   to_port     = 6501
+  #   protocol    = "tcp"
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
 
   ingress {
     from_port   = 0
